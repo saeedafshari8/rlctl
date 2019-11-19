@@ -1,12 +1,12 @@
 plugins {
-	id 'org.springframework.boot' version '2.2.1.RELEASE'
+	id 'org.springframework.boot' version '.SpringBootVersion'
 	id 'io.spring.dependency-management' version '1.0.8.RELEASE'
 	id 'java'
 }
 
 group = '{{.Group}}'
-{{if (ne .Version "")}}version = '{{.Version}}'{{end}}
-{{if (ne .SourceCompatibility "")}}sourceCompatibility = '{{.SourceCompatibility}}'{{else}}sourceCompatibility = '11'{{end}}
+{{if (ne .AppVersion "")}}version = '{{.AppVersion}}'{{end}}
+sourceCompatibility = '{{.JavaVersion}}'
 
 repositories {
 	mavenCentral()

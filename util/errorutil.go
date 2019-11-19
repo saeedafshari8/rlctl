@@ -9,6 +9,7 @@ const (
 	EnvironmentError = 1
 	FileNotFound     = 2
 	InvalidTemplate  = 3
+	ArgMissing       = 4
 )
 
 func Error(err error) bool {

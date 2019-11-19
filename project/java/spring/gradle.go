@@ -1,4 +1,4 @@
-package gradle
+package spring
 
 import (
 	"bytes"
@@ -10,16 +10,10 @@ import (
 )
 
 var (
-	gradleBuildTemplate = "project/java/gradle/build.gradle.tmpl"
+	gradleBuildTemplate = "project/java/spring/build.gradle.tmpl"
 )
 
-type GradleProjectConfig struct {
-	Group               string
-	Version             string
-	SourceCompatibility string
-}
-
-func ParseTemplate(gradleTemplateData GradleProjectConfig) string {
+func ParseGradleTemplate(gradleTemplateData ProjectConfig) string {
 	dir, err := os.Getwd()
 
 	util.LogAndExit(err, util.EnvironmentError)

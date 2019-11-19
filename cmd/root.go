@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"github.com/mitchellh/go-homedir"
+	"github.com/saeedafshari8/flixinit/util"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"os"
@@ -28,12 +29,10 @@ func init() {
 
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.flixinit.yaml)")
 	rootCmd.PersistentFlags().StringP("author", "a", "Saeed Afshari", "author name for copyright attribution")
-	rootCmd.PersistentFlags().StringVarP(&userLicense, "license", "l", "Apache 2.0", "name of license for the project")
+	rootCmd.PersistentFlags().StringVarP(&userLicense, "license", "", "Apache 2.0", "name of license for the project")
 	rootCmd.PersistentFlags().Bool("viper", true, "use Viper for configuration")
-	viper.BindPFlag("author", rootCmd.PersistentFlags().Lookup("author"))
-	viper.BindPFlag("useViper", rootCmd.PersistentFlags().Lookup("viper"))
-	viper.SetDefault("author", "NAME HERE <EMAIL ADDRESS>")
-	viper.SetDefault("license", "apache")
+	viper.SetDefault("author", "Saeed Afshari <saeed.afshari8@gmail.com>")
+	viper.SetDefault("license", "Apache 2.0")
 
 	rootCmd.AddCommand(cmdJava)
 }
@@ -45,9 +44,7 @@ func initConfig() {
 	} else {
 		// Find home directory.
 		home, err := homedir.Dir()
-		if err != nil {
-			er(err)
-		}
+		util.LogAndExit(err, util.EnvironmentError)
 
 		// Search config in home directory with name ".flixinit" (without extension).
 		viper.AddConfigPath(home)
@@ -59,10 +56,6 @@ func initConfig() {
 	if err := viper.ReadInConfig(); err == nil {
 		fmt.Println("Using config file:", viper.ConfigFileUsed())
 	}
-}
-
-func er(e error) {
-	fmt.Fprint(os.Stderr, e)
 }
 
 func Execute() {
