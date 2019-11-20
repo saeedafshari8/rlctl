@@ -21,15 +21,24 @@ const (
 )
 
 type ProjectConfig struct {
-	Type              string
-	Language          string
-	SpringBootVersion string
-	Name              string
-	Description       string
-	Group             string
-	AppVersion        string
-	JavaVersion       string
-	DockerConfig      Docker
+	Type                       string
+	Language                   string
+	SpringBootVersion          string
+	Name                       string
+	Description                string
+	Group                      string
+	AppVersion                 string
+	AppProtocol                string
+	AppHost                    string
+	AppPort                    string
+	JavaVersion                string
+	Database                   string
+	EnableJPA                  bool
+	EnableLiquibase            bool
+	EnableSecurity             bool
+	EnableOAuth2               bool
+	EnableAzureActiveDirectory bool
+	DockerConfig               Docker
 }
 
 func DownloadSpringApplication(config ProjectConfig) string {

@@ -15,12 +15,12 @@ func init() {
 	dir, err := os.Getwd()
 	LogAndExit(err, EnvironmentError)
 	TempDirectory = path.Join(dir, "tmp")
-	createDirIfNotExists(&TempDirectory)
+	CreateDirIfNotExists(&TempDirectory)
 	OutputDirectory = path.Join(dir, "build")
-	createDirIfNotExists(&OutputDirectory)
+	CreateDirIfNotExists(&OutputDirectory)
 }
 
-func createDirIfNotExists(dir *string) {
+func CreateDirIfNotExists(dir *string) {
 	if result, _ := Exists(*dir); !result {
 		LogAndExit(os.Mkdir(*dir, os.ModePerm), EnvironmentError)
 	}

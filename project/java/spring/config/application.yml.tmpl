@@ -1,0 +1,94 @@
+# application.yml
+
+info:
+    application:
+        name: {{.Name}}
+        baseUrl: {{.AppProtocol}}://{{.AppHost}}:{{.AppPort}}
+
+endpoints:
+    shutdown:
+        enabled: true
+        sensitive: false
+    health:
+        enabled: true
+        sensitive: false
+        secure: false
+
+spring:
+    main:
+        webEnvironment: true
+
+{{if eq .EnableJPA true}}
+    # JPA (JpaBaseConfiguration, HibernateJpaAutoConfiguration)
+    jpa:
+        show-sql: false
+        database: {{.Database}}
+        hibernate:
+            naming:
+                physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+            ddl-auto: none
+            use-new-id-generator-mappings: false
+        properties:
+            hibernate:
+                default_schema: {{.Name}}
+                show_sql: false
+
+    {{if eq .EnableLiquibase true}}
+    liquibase:
+        enabled: {{.EnableLiquibase}}
+        dropFirst: false
+        checkChangeLogLocation: true
+        changeLog: classpath:db/master.xml
+        defaultSchema: {{.Name}}
+    {{end}}
+{{end}}
+logging:
+    file: /var/log/{{.Name}}.log
+    level:
+        org.springframework.web: 'ERROR'
+        org.hibernate: 'ERROR'
+        com.google.maps.GeoApiContext: 'ERROR'
+        com.google.maps.OkHttpRequestHandler: 'ERROR'
+
+server:
+    port: {{.AppPort}}
+    compression:
+        enabled: true
+        mimeTypes: 'application/json,application/xml,application/javascript,text/html,text/xml,text/plain'
+    tomcat:
+        remote_ip_header: "x-forwarded-for"
+        protocol_header: "x-forwarded-proto"
+
+{{if eq .EnableSecurity true}}
+security:
+    enabled: {{.EnableSecurity}}
+    {{if eq .EnableOAuth2 true}}
+    oauth2:
+        client:
+            clientId:
+            clientSecret:
+            accessTokenUri:
+            tenant:
+            authority:
+            resource:
+            userAuthorizationUri:
+            scope: openid
+            tokenName: access_token
+            clientAuthenticationScheme: form
+        resource:
+            userInfoUri:
+            preferTokenInfo: false
+    {{end}}
+{{end}}
+
+{{if eq .EnableAzureActiveDirectory true}}
+# By default, azure.activedirectory.environment property has value `global`,
+# supported value is global, cn.
+# azure.activedirectory.environment=global
+azure:
+    activedirectory:
+        client-id:
+        client-secret:
+        ActiveDirectoryGroups:
+        access-token-uri:
+{{end}}

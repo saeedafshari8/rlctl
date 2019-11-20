@@ -19,24 +19,7 @@ const (
 )
 
 func ParseGradleTemplate(gradleTemplateData *ProjectConfig) string {
-	dir, err := os.Getwd()
-
-	util.LogAndExit(err, util.EnvironmentError)
-
-	file, err := ioutil.ReadFile(fmt.Sprintf("%s/%s", dir, gradleBuildTemplate))
-
-	util.LogAndExit(err, util.FileNotFound)
-
-	t, err := template.New(gradleBuildTemplate).Parse(string(file))
-
-	util.LogAndExit(err, util.InvalidTemplate)
-
-	var tmpl bytes.Buffer
-	err = t.ExecuteTemplate(&tmpl, gradleBuildTemplate, *gradleTemplateData)
-
-	util.LogAndExit(err, util.InvalidTemplate)
-
-	return tmpl.String()
+	return parseSpringTemplate(gradleTemplateData, gradleBuildTemplate)
 }
 
 func OverwriteGradleBuild(projectRootPath, template string) {
@@ -49,23 +32,19 @@ func OverwriteGradleBuild(projectRootPath, template string) {
 }
 
 func ParseDockerTemplate(dockerTemplateData *ProjectConfig) string {
+	return parseSpringTemplate(dockerTemplateData, dockerfileTemplate)
+}
+
+func parseSpringTemplate(templateData *ProjectConfig, templateFile string) string {
 	dir, err := os.Getwd()
-
 	util.LogAndExit(err, util.EnvironmentError)
-
-	file, err := ioutil.ReadFile(fmt.Sprintf("%s/%s", dir, dockerfileTemplate))
-
+	file, err := ioutil.ReadFile(fmt.Sprintf("%s/%s", dir, templateFile))
 	util.LogAndExit(err, util.FileNotFound)
-
-	t, err := template.New(dockerfileTemplate).Parse(string(file))
-
+	t, err := template.New(templateFile).Parse(string(file))
 	util.LogAndExit(err, util.InvalidTemplate)
-
 	var tmpl bytes.Buffer
-	err = t.ExecuteTemplate(&tmpl, dockerfileTemplate, *dockerTemplateData)
-
+	err = t.ExecuteTemplate(&tmpl, templateFile, *templateData)
 	util.LogAndExit(err, util.InvalidTemplate)
-
 	return tmpl.String()
 }
 
