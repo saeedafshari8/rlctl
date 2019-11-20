@@ -52,8 +52,9 @@ to create the project.<br/>
 # Installing
 # Getting Started
 **Use the flixinit Generator**<br/>
-##Example
-###1: Create Spring Boot/Gradle application 
+
+**Example**<br/>
+Example1: Create Spring Boot/Gradle application 
 *     flixinit java --group=charter.flixbus.com --name=testApp -v=1.0.0 --liquibase=true --jpa=true
 
 The above command create a spring boot/gradle application with the following config:
