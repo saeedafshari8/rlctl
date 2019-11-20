@@ -29,6 +29,7 @@ type ProjectConfig struct {
 	Group             string
 	AppVersion        string
 	JavaVersion       string
+	DockerConfig      Docker
 }
 
 func DownloadSpringApplication(config ProjectConfig) string {

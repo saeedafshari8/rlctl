@@ -27,21 +27,22 @@ var (
 		Run: func(cmd *cobra.Command, args []string) {
 			initJavaConfig(cmd)
 
-			var template string
+			projectRootPath := spring.DownloadSpringApplication(javaProjectConfig.SpringProjectConfig)
+
 			switch javaProjectConfig.SpringProjectConfig.Type {
 			case spring.Gradle:
-				template = spring.ParseGradleTemplate(javaProjectConfig.SpringProjectConfig)
+				spring.OverwriteGradleBuild(projectRootPath, spring.ParseGradleTemplate(&javaProjectConfig.SpringProjectConfig))
+				spring.CreateDockerfile(projectRootPath, spring.ParseDockerTemplate(&javaProjectConfig.SpringProjectConfig))
 				log.Println("build.gradle template compiled!")
 			}
-
-			projectRootPath := spring.DownloadSpringApplication(javaProjectConfig.SpringProjectConfig)
-			spring.OverwriteGradleBuild(projectRootPath, template)
 		},
 	}
 )
 
 func init() {
 	cmdJava.Flags().StringP("app-version", "v", "", "Spring boot application version (default is empty and there will not be any version defined for the project)")
+	cmdJava.Flags().StringP("container-port", "p", "8080", "Docker exposed port (default is 8080)")
+	cmdJava.Flags().StringP("container-image", "i", "openjdk:11.0.5-jdk-stretch", "Docker exposed port (default is openjdk:11.0.5-jdk-stretch)")
 	cmdJava.Flags().StringP("description", "", "", "Spring application description")
 	cmdJava.Flags().StringP("group", "g", "", "Spring application groupId (default is empty)")
 	cmdJava.Flags().StringP("java-version", "j", "11", "Gradle (java)sourceCompatibility version (default is 11)")
@@ -72,6 +73,8 @@ func initJavaConfig(cmd *cobra.Command) {
 	javaProjectConfig.SpringProjectConfig.SpringBootVersion = getValue(cmd, "spring-boot-version")
 	javaProjectConfig.SpringProjectConfig.AppVersion = getValue(cmd, "app-version")
 	javaProjectConfig.SpringProjectConfig.JavaVersion = getValue(cmd, "java-version")
+	javaProjectConfig.SpringProjectConfig.DockerConfig.ExposedPort = getValue(cmd, "container-port")
+	javaProjectConfig.SpringProjectConfig.DockerConfig.Image = getValue(cmd, "container-image")
 }
 
 func checkValue(value, key string) {

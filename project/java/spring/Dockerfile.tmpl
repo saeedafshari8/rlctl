@@ -1,0 +1,8 @@
+FROM {{.DockerConfig.Image}}
+
+EXPOSE {{.DockerConfig.ExposedPort}}
+CMD [ "-jar", "/app.jar" ]
+ENTRYPOINT [ "java" ]
+
+COPY "config" "config"
+COPY "build/libs/{{.Name}}-{{.AppVersion}}.jar" "/app.jar"

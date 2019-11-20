@@ -13,10 +13,12 @@ import (
 
 const (
 	gradleBuildTemplate         = "project/java/spring/build.gradle.tmpl"
+	dockerfileTemplate          = "project/java/spring/Dockerfile.tmpl"
 	gradleBuildFileRelativePath = "build.gradle"
+	dockerFileRelativePath      = "Dockerfile"
 )
 
-func ParseGradleTemplate(gradleTemplateData ProjectConfig) string {
+func ParseGradleTemplate(gradleTemplateData *ProjectConfig) string {
 	dir, err := os.Getwd()
 
 	util.LogAndExit(err, util.EnvironmentError)
@@ -30,7 +32,7 @@ func ParseGradleTemplate(gradleTemplateData ProjectConfig) string {
 	util.LogAndExit(err, util.InvalidTemplate)
 
 	var tmpl bytes.Buffer
-	err = t.ExecuteTemplate(&tmpl, gradleBuildTemplate, gradleTemplateData)
+	err = t.ExecuteTemplate(&tmpl, gradleBuildTemplate, *gradleTemplateData)
 
 	util.LogAndExit(err, util.InvalidTemplate)
 
@@ -42,6 +44,36 @@ func OverwriteGradleBuild(projectRootPath, template string) {
 	err := ioutil.WriteFile(filePath, []byte(template), os.ModePerm)
 	if err != nil {
 		log.Printf("Unable to overwrite file %s\n", filePath)
+	}
+	log.Printf("%s updated successfully!", filePath)
+}
+
+func ParseDockerTemplate(dockerTemplateData *ProjectConfig) string {
+	dir, err := os.Getwd()
+
+	util.LogAndExit(err, util.EnvironmentError)
+
+	file, err := ioutil.ReadFile(fmt.Sprintf("%s/%s", dir, dockerfileTemplate))
+
+	util.LogAndExit(err, util.FileNotFound)
+
+	t, err := template.New(dockerfileTemplate).Parse(string(file))
+
+	util.LogAndExit(err, util.InvalidTemplate)
+
+	var tmpl bytes.Buffer
+	err = t.ExecuteTemplate(&tmpl, dockerfileTemplate, *dockerTemplateData)
+
+	util.LogAndExit(err, util.InvalidTemplate)
+
+	return tmpl.String()
+}
+
+func CreateDockerfile(projectRootPath, template string) {
+	filePath := path.Join(projectRootPath, dockerFileRelativePath)
+	err := ioutil.WriteFile(filePath, []byte(template), os.ModePerm)
+	if err != nil {
+		log.Printf("Unable to write file %s\n", filePath)
 	}
 	log.Printf("%s updated successfully!", filePath)
 }

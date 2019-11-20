@@ -28,6 +28,8 @@ to create the project.<br/>
 *     flixinit java [flags]
 **Flags:**<br/>
 *     -v, --app-version string           Spring boot application version (default is empty and there will not be any version defined for the project)
+*     -i, --container-image string       Docker exposed port (default is openjdk:11.0.5-jdk-stretch) (default "openjdk:11.0.5-jdk-stretch")
+*     -p, --container-port string        Docker exposed port (default is 8080) (default "8080")
 *     --description string               Spring application description
 *     -g, --group string                 Spring application groupId (default is empty)
 *     -h, --help                         help for java
