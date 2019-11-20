@@ -20,3 +20,29 @@ Flags:
       --viper            use Viper for configuration (default true)
 
 Use "flixinit [command] --help" for more information about a command.  
+
+# Table of Contents
+
+- [Overview](#overview)
+- [Concepts](#concepts)
+  * [Commands](#commands)
+- [Installing](#installing)
+- [Getting Started](#getting-started)
+  * [Using the flixinit Generator](#using-the-flixinit-generator)
+  * [Example](#example)
+  * [Help Command](#help-command)
+- [Contributing](#contributing)
+- [License](#license)
+
+# Overview
+# Concepts
+**Commands**
+# Installing
+# Getting Started
+**Use the flixinit Generator**
+**Example**
+**Help Command**
+# Contributing
+# License
+
+Cobra is released under the Apache 2.0 license. See [LICENSE.txt](https://github.com/saeedafshari8/flixinit/blob/master/LICENSE.txt)
