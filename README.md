@@ -35,7 +35,25 @@ Use "flixinit [command] --help" for more information about a command.
 
 # Overview
 # Concepts
-**Commands**
+# Commands
+**java**<br/>
+Use java command to generate a spring boot application. This command use [SpringInitializr](https://start.spring.io/) service
+to create the project.<br/>
+
+**Usage**:<br/>
+*     flixinit java [flags]
+**Flags:**<br/>
+*     -v, --app-version string           Spring boot application version (default is empty and there will not be any version defined for the project)
+*     --description string               Spring application description
+*     -g, --group string                 Spring application groupId (default is empty)
+*     -h, --help                         help for java
+*     -j, --java-version string          Gradle (java)sourceCompatibility version (default is 11) (default "11")
+*     -l, --language string              Spring project language [java | kotlin | groovy] (default is java) (default "java")
+*     --name string                      Spring application name
+*     --spring-boot-version string       Spring boot version (default is 2.2.1.RELEASE) (default "2.2.1.RELEASE")
+*     -t, --type string                  Spring project type [gradle-project | maven-project] (default is gradle-project) (default "gradle-project")
+
+
 # Installing
 # Getting Started
 **Use the flixinit Generator**

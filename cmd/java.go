@@ -39,15 +39,15 @@ var (
 )
 
 func init() {
-	cmdJava.Flags().StringP("app-version", "v", "", "Gradle application version (default is empty)")
-	cmdJava.Flags().StringP("name", "", "", "Spring application name")
+	cmdJava.Flags().StringP("app-version", "v", "", "Spring boot application version (default is empty and there will not be any version defined for the project)")
 	cmdJava.Flags().StringP("description", "", "", "Spring application description")
+	cmdJava.Flags().StringP("group", "g", "", "Spring application groupId (default is empty)")
 	cmdJava.Flags().StringP("java-version", "j", "11", "Gradle (java)sourceCompatibility version (default is 11)")
-	cmdJava.Flags().StringP("group", "g", "", "Gradle project group (default is empty)")
-	cmdJava.Flags().StringP("type", "t", spring.Gradle, "Spring project type [gradle-project | maven-project] (default is gradle-project)")
 	cmdJava.Flags().StringP("language", "l", spring.Java, "Spring project language [java | kotlin | groovy] (default is java)")
+	cmdJava.Flags().StringP("name", "", "", "Spring application name")
 	cmdJava.Flags().StringP("spring-boot-version", "", spring.SpringBootLatestVersion,
 		fmt.Sprintf("Spring boot version (default is %s)", spring.SpringBootLatestVersion))
+	cmdJava.Flags().StringP("type", "t", spring.Gradle, "Spring project type [gradle-project | maven-project] (default is gradle-project)")
 }
 
 func getValue(cmd *cobra.Command, key string) string {
