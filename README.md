@@ -44,4 +44,4 @@ Use "flixinit [command] --help" for more information about a command.
 # Contributing
 # License
 
-Cobra is released under the Apache 2.0 license. See [LICENSE.txt](https://github.com/saeedafshari8/flixinit/blob/master/LICENSE.txt)
+flixinit is released under the Apache 2.0 license. See [LICENSE.txt](https://github.com/saeedafshari8/flixinit/blob/master/LICENSE.txt)
