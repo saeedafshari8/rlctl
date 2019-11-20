@@ -1,4 +1,4 @@
-![flixinit](/flixinit.png)
+![flixinit](flixinit.png)
 # flixinit
 
 Flixinit is a simple CLI tool to make your application a great tenant for cloud environments.
