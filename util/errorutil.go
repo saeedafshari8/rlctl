@@ -10,7 +10,14 @@ const (
 	FileNotFound     = 2
 	InvalidTemplate  = 3
 	ArgMissing       = 4
+	NetworkError     = 5
 )
+
+type ChannelResponse struct {
+	Success bool
+	Message string
+	Error   error
+}
 
 func Error(err error) bool {
 	if err != nil {

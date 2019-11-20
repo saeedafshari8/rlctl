@@ -20,3 +20,6 @@ go.sum
 
 flixinit.out
 flixinit
+
+tmp
+build
