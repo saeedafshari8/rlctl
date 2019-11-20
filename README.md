@@ -4,22 +4,21 @@
 Flixinit is a simple CLI tool to make your application a great tenant for cloud environments.
 Complete documentation is available at https://github.com/saeedafshari8/flixinit
 
-Usage:
-  flixinit [flags]
-  flixinit [command]
+Usage:<br />
+flixinit [flags]<br />
+flixinit [command]
 
-Available Commands:
-  help        Help about any command
-  java        java command generates a new spring/java project
+Available Commands:<br />
+help &nbsp;&nbsp; Help about any command<br />
+java &nbsp;&nbsp; java command generates a new spring/java project
 
-Flags:
-  -a, --author string    author name for copyright attribution (default "Saeed Afshari")
-      --config string    config file (default is $HOME/.flixinit.yaml)
-  -h, --help             help for flixinit
-      --license string   name of license for the project (default "Apache 2.0")
-      --viper            use Viper for configuration (default true)
+Flags:<br />
+  -a, --author string &nbsp;&nbsp; author name for copyright attribution (default "Saeed Afshari")<br />
+      --config string &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; config file (default is $HOME/.flixinit.yaml)<br />
+  -h, --help &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; help for flixinit<br />
+  --license string &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; name of license for the project (default "Apache 2.0")<br />
 
-Use "flixinit [command] --help" for more information about a command.  
+Use "flixinit [command] --help" for more information about a command.
 
 # Table of Contents
 
