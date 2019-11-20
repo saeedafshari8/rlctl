@@ -27,13 +27,15 @@ var (
 		Run: func(cmd *cobra.Command, args []string) {
 			initJavaConfig(cmd)
 
+			var template string
 			switch javaProjectConfig.SpringProjectConfig.Type {
 			case spring.Gradle:
-				spring.ParseGradleTemplate(javaProjectConfig.SpringProjectConfig)
+				template = spring.ParseGradleTemplate(javaProjectConfig.SpringProjectConfig)
 				log.Println("build.gradle template compiled!")
 			}
 
-			spring.DownloadSpringApplication(javaProjectConfig.SpringProjectConfig)
+			projectRootPath := spring.DownloadSpringApplication(javaProjectConfig.SpringProjectConfig)
+			spring.OverwriteGradleBuild(projectRootPath, template)
 		},
 	}
 )

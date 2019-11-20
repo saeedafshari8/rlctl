@@ -5,12 +5,15 @@ import (
 	"fmt"
 	"github.com/saeedafshari8/flixinit/util"
 	"io/ioutil"
+	"log"
 	"os"
+	"path"
 	"text/template"
 )
 
-var (
-	gradleBuildTemplate = "project/java/spring/build.gradle.tmpl"
+const (
+	gradleBuildTemplate         = "project/java/spring/build.gradle.tmpl"
+	gradleBuildFileRelativePath = "build.gradle"
 )
 
 func ParseGradleTemplate(gradleTemplateData ProjectConfig) string {
@@ -32,4 +35,13 @@ func ParseGradleTemplate(gradleTemplateData ProjectConfig) string {
 	util.LogAndExit(err, util.InvalidTemplate)
 
 	return tmpl.String()
+}
+
+func OverwriteGradleBuild(projectRootPath, template string) {
+	filePath := path.Join(projectRootPath, gradleBuildFileRelativePath)
+	err := ioutil.WriteFile(filePath, []byte(template), os.ModePerm)
+	if err != nil {
+		log.Printf("Unable to overwrite file %s\n", filePath)
+	}
+	log.Printf("%s updated successfully!", filePath)
 }

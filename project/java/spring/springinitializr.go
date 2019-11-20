@@ -31,14 +31,16 @@ type ProjectConfig struct {
 	JavaVersion       string
 }
 
-func DownloadSpringApplication(config ProjectConfig) {
+func DownloadSpringApplication(config ProjectConfig) string {
 	url := compileInitializerUrl(config)
 	files, err := get(url)
 	util.LogAndExit(err, util.NetworkError)
 	for _, fileName := range files {
 		log.Println(fileName)
 	}
-	log.Printf("Spring Boot project created successfully under :%s \n", path.Join(util.OutputDirectory, config.Name))
+	projectPath := path.Join(util.OutputDirectory, config.Name)
+	log.Printf("Spring Boot project created successfully under :%s \n", projectPath)
+	return projectPath
 }
 
 func get(url string) ([]string, error) {
