@@ -1,11 +1,11 @@
 package cmd
 
 import (
-	"fmt"
 	"github.com/mitchellh/go-homedir"
 	"github.com/saeedafshari8/flixinit/util"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"log"
 	"os"
 )
 
@@ -54,13 +54,13 @@ func initConfig() {
 	viper.AutomaticEnv()
 
 	if err := viper.ReadInConfig(); err == nil {
-		fmt.Println("Using config file:", viper.ConfigFileUsed())
+		log.Printf("Using config file:%v\n", viper.ConfigFileUsed())
 	}
 }
 
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
-		fmt.Printf("%v", err)
+		log.Printf("%v", err)
 		os.Exit(1)
 	}
 }

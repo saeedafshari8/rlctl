@@ -21,7 +21,7 @@ Complete documentation is available at https://github.com/saeedafshari8/flixinit
 # Concepts
 # Commands
 **java**<br/>
-Use java command to generate a spring boot application. This command use [SpringInitializr](https://start.spring.io/) service
+Use java command to generate a spring boot application. This command uses [SpringInitializr](https://start.spring.io/) service
 to create the project.<br/>
 
 **Usage**:<br/>
