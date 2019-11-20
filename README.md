@@ -51,9 +51,19 @@ to create the project.<br/>
 
 # Installing
 # Getting Started
-**Use the flixinit Generator**
-**Example**
-**Help Command**
+**Use the flixinit Generator**<br/>
+##Example
+###1: Create Spring Boot/Gradle application 
+*     flixinit java --group=charter.flixbus.com --name=testApp -v=1.0.0 --liquibase=true --jpa=true
+
+The above command create a spring boot/gradle application with the following config:
+* groupId = charter.flixbus.com
+* artifactId = tesApp
+* Dockerfile
+* application.yml|application-int.yml|application.local|application-prod.yml
+* Enable JPA-Hibernate with MYSQL config
+* Liquibase integration
+
 # Contributing
 # License
 
