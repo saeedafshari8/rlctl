@@ -8,6 +8,7 @@ import (
 
 var (
 	moPath           = "project/java/spring/buildpipeline/mo.sh"
+	gitignorePath    = "project/java/spring/buildpipeline/.gitignore.tmpl"
 	gitlabCITemplate = "project/java/spring/buildpipeline/.gitlab-ci-default.yml"
 )
 
@@ -26,6 +27,10 @@ func ParseAndSaveCiCdFile(projectRoot string, templateData *ProjectConfig) {
 		_, err = util.Copy(path.Join(cwd, moPath), path.Join(configPath, "mo.sh"))
 		if err != nil {
 			util.LogMessageAndExit("Unable to copy mo.sh")
+		}
+		_, err = util.Copy(path.Join(cwd, gitignorePath), path.Join(projectRoot, ".gitignore"))
+		if err != nil {
+			util.LogMessageAndExit("Unable to copy .gitignore")
 		}
 	}
 
