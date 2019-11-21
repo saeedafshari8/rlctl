@@ -34,6 +34,7 @@ var (
 				spring.OverwriteGradleBuild(projectRootPath, spring.ParseGradleTemplate(&javaProjectConfig.SpringProjectConfig))
 				spring.CreateDockerfile(projectRootPath, spring.ParseDockerTemplate(&javaProjectConfig.SpringProjectConfig))
 				spring.ParseAndSaveAppConfigTemplates(projectRootPath, &javaProjectConfig.SpringProjectConfig)
+				spring.ParseAndSaveCiCdFile(projectRootPath, &javaProjectConfig.SpringProjectConfig)
 				log.Println("build.gradle template compiled!")
 			}
 		},
@@ -51,6 +52,7 @@ func init() {
 	cmdJava.Flags().StringP("description", "", "", "Spring application description")
 	cmdJava.Flags().StringP("database", "", "MYSQL", "JPA Database Name (default is MYSQL)")
 	cmdJava.Flags().StringP("group", "g", "", "Spring application groupId (default is empty)")
+	cmdJava.Flags().BoolP("gitlabci", "", true, "Create .gitlab-ci config (default is true)")
 	cmdJava.Flags().StringP("java-version", "j", "11", "Gradle (java)sourceCompatibility version (default is 11)")
 	cmdJava.Flags().BoolP("jpa", "", true, "Enable JPA-Hibernate (default is true)")
 	cmdJava.Flags().BoolP("liquibase", "", false, "Enable Liquibase migration (default is false)")
@@ -100,6 +102,7 @@ func initJavaConfig(cmd *cobra.Command) {
 	javaProjectConfig.SpringProjectConfig.EnableSecurity = getValueBool(cmd, "security")
 	javaProjectConfig.SpringProjectConfig.EnableOAuth2 = getValueBool(cmd, "oauth2")
 	javaProjectConfig.SpringProjectConfig.EnableAzureActiveDirectory = getValueBool(cmd, "azure-ad")
+	javaProjectConfig.SpringProjectConfig.EnableGitLab = getValueBool(cmd, "gitlabci")
 }
 
 func checkValue(value, key string) {

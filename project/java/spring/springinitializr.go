@@ -38,6 +38,7 @@ type ProjectConfig struct {
 	EnableSecurity             bool
 	EnableOAuth2               bool
 	EnableAzureActiveDirectory bool
+	EnableGitLab               bool
 	DockerConfig               Docker
 }
 
