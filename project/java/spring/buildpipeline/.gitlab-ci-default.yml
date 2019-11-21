@@ -1,0 +1,66 @@
+variables:
+  DOCKER_REPO:           {{.DockerConfig.RegistryUrl}}
+  PROJECT_BUILDER:       {{.DockerConfig.Image}}
+
+{{ if eq .Type "gradle-project"}}
+before_script:
+  - export GRADLE_USER_HOME=`pwd`/.gradle
+
+cache:
+  paths:
+    - .gradle/wrapper
+    - .gradle/caches
+{{end}}
+
+stages:
+  - prepare
+  - build
+  - check
+  - sonar
+  - pack
+  - deploy
+
+# Build project
+build:
+  image: $PROJECT_BUILDER
+  stage: build
+  script:{{ if eq .Type "gradle-project"}}
+    - ./gradlew clean build -x test --build-cache --parallel{{end}}
+  artifacts:
+    paths: [build/libs, build/reports, build/classes]
+  tags:{{ range $index, $element := .GitLabCIConfig.Tags}}
+    - {{$element}}{{end}}
+  except:{{ range $index, $element := .GitLabCIConfig.Excepts}}
+    - {{$element}}{{end}}
+
+# Execute code style check & Tests
+checkstyle: {{ if eq .Type "gradle-project"}}
+  image: $PROJECT_BUILDER
+  stage: check
+  cache:
+    paths:
+      - .gradle/wrapper
+      - .gradle/caches
+    policy: pull
+  script:
+    - ./gradlew check --build-cache --parallel
+  artifacts:
+  tags:{{ range $index, $element := .GitLabCIConfig.Tags}}
+    - {{$element}}{{end}}
+  except:{{ range $index, $element := .GitLabCIConfig.Excepts}}
+    - {{$element}}{{end}}
+  {{end}}
+# Create Docker image based on release tag
+pack:
+  stage: pack
+  cache: {}
+  variables:
+    IMAGE_NAME:     $DOCKER_REPO/{{.Name}}:$CI_COMMIT_TAG
+  script:
+    - docker build -t $IMAGE_NAME .
+    - docker push     $IMAGE_NAME
+    - docker rmi      $IMAGE_NAME
+  tags: {{ range $index, $element := .GitLabCIConfig.Tags}}
+    - {{$element}}{{end}}
+  only:
+    - tags

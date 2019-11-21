@@ -40,6 +40,7 @@ type ProjectConfig struct {
 	EnableAzureActiveDirectory bool
 	EnableGitLab               bool
 	DockerConfig               Docker
+	GitLabCIConfig             GitLabCI
 }
 
 func DownloadSpringApplication(config ProjectConfig) string {

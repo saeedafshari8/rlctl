@@ -51,8 +51,11 @@ func init() {
 	cmdJava.Flags().StringP("container-image", "i", "openjdk:11.0.5-jdk-stretch", "Docker exposed port (default is openjdk:11.0.5-jdk-stretch)")
 	cmdJava.Flags().StringP("description", "", "", "Spring application description")
 	cmdJava.Flags().StringP("database", "", "MYSQL", "JPA Database Name (default is MYSQL)")
+	cmdJava.Flags().StringP("docker-registry", "", "https://index.docker.io/v1", "Docker Registry URL (default is https://index.docker.io/v1)")
 	cmdJava.Flags().StringP("group", "g", "", "Spring application groupId (default is empty)")
 	cmdJava.Flags().BoolP("gitlabci", "", true, "Create .gitlab-ci config (default is true)")
+	cmdJava.Flags().StringArrayP("gitlabci-tags", "", []string{"docker", "autoscaling"}, ".gitlab-ci tags (default is docker,autoscaling)")
+	cmdJava.Flags().StringArrayP("gitlabci-except", "", []string{"schedules"}, ".gitlab-ci except (default is schedules)")
 	cmdJava.Flags().StringP("java-version", "j", "11", "Gradle (java)sourceCompatibility version (default is 11)")
 	cmdJava.Flags().BoolP("jpa", "", true, "Enable JPA-Hibernate (default is true)")
 	cmdJava.Flags().BoolP("liquibase", "", false, "Enable Liquibase migration (default is false)")
@@ -73,6 +76,12 @@ func getValue(cmd *cobra.Command, key string) string {
 
 func getValueBool(cmd *cobra.Command, key string) bool {
 	b, err := cmd.Flags().GetBool(key)
+	util.LogAndExit(err, util.ArgMissing)
+	return b
+}
+
+func getValues(cmd *cobra.Command, key string) []string {
+	b, err := cmd.Flags().GetStringArray(key)
 	util.LogAndExit(err, util.ArgMissing)
 	return b
 }
@@ -103,6 +112,9 @@ func initJavaConfig(cmd *cobra.Command) {
 	javaProjectConfig.SpringProjectConfig.EnableOAuth2 = getValueBool(cmd, "oauth2")
 	javaProjectConfig.SpringProjectConfig.EnableAzureActiveDirectory = getValueBool(cmd, "azure-ad")
 	javaProjectConfig.SpringProjectConfig.EnableGitLab = getValueBool(cmd, "gitlabci")
+	javaProjectConfig.SpringProjectConfig.DockerConfig.RegistryUrl = getValue(cmd, "docker-registry")
+	javaProjectConfig.SpringProjectConfig.GitLabCIConfig.Tags = getValues(cmd, "gitlabci-tags")
+	javaProjectConfig.SpringProjectConfig.GitLabCIConfig.Excepts = getValues(cmd, "gitlabci-except")
 }
 
 func checkValue(value, key string) {

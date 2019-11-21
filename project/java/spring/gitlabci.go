@@ -7,8 +7,14 @@ import (
 )
 
 var (
-	moPath = "project/java/spring/buildpipeline/mo.sh"
+	moPath           = "project/java/spring/buildpipeline/mo.sh"
+	gitlabCITemplate = "project/java/spring/buildpipeline/.gitlab-ci-default.yml"
 )
+
+type GitLabCI struct {
+	Tags    []string
+	Excepts []string
+}
 
 func ParseAndSaveCiCdFile(projectRoot string, templateData *ProjectConfig) {
 	if (*templateData).EnableGitLab {
@@ -19,7 +25,9 @@ func ParseAndSaveCiCdFile(projectRoot string, templateData *ProjectConfig) {
 		util.LogAndExit(err, util.EnvironmentError)
 		_, err = util.Copy(path.Join(cwd, moPath), path.Join(configPath, "mo.sh"))
 		if err != nil {
-			util.LogMessageAndExit("Unable to copy Liquibase master.xml")
+			util.LogMessageAndExit("Unable to copy mo.sh")
 		}
 	}
+
+	compileTemplateAndSave(&projectRoot, &gitlabCITemplate, templateData, ".gitlab-ci.yml")
 }
