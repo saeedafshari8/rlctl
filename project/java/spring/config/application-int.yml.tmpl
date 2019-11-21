@@ -1,0 +1,11 @@
+info:
+    application:
+        environment: int
+        baseUrl: https://to-be-defined
+
+spring:
+    datasource:
+        # you need to set DB_INT_HOST, DB_INT_PORT, DB_INT_PASSWORD in the repository CI/CD settings
+        url: jdbc:mysql://${DB_INT_HOST}:${DB_INT_PORT:3306}/{{.Name}}?UseUnicode=true&characterEncoding=utf8
+        username:
+        password: ${DB_INT_PASSWORD}

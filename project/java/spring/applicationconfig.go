@@ -11,8 +11,11 @@ import (
 	"text/template"
 )
 
-const (
-	applicationConfigTemplate = "project/java/spring/config/application.yml.tmpl"
+var (
+	applicationConfigTemplate            = "project/java/spring/config/application.yml.tmpl"
+	applicationLocalConfigTemplate       = "project/java/spring/config/application-local.yml.tmpl"
+	applicationIntegrationConfigTemplate = "project/java/spring/config/application-int.yml.tmpl"
+	applicationProdConfigTemplate        = "project/java/spring/config/application-prod.yml.tmpl"
 )
 
 func ParseAndSaveAppConfigTemplates(projectRoot string, templateData *ProjectConfig) {
@@ -31,12 +34,19 @@ func ParseAndSaveAppConfigTemplates(projectRoot string, templateData *ProjectCon
 		}
 	}
 
-	filePath := path.Join(configPath, "application.yml")
-	err := ioutil.WriteFile(filePath, []byte(parseApplicationTemplate(templateData, applicationConfigTemplate)), os.ModePerm)
+	compileTemplateAndSave(&configPath, &applicationConfigTemplate, templateData, "application.yml")
+	compileTemplateAndSave(&configPath, &applicationLocalConfigTemplate, templateData, "application-local.yml")
+	compileTemplateAndSave(&configPath, &applicationIntegrationConfigTemplate, templateData, "application-int.yml")
+	compileTemplateAndSave(&configPath, &applicationProdConfigTemplate, templateData, "application-prod.yml")
+}
+
+func compileTemplateAndSave(configPath, templatePath *string, templateData *ProjectConfig, fileName string) {
+	filePath := path.Join(*configPath, fileName)
+	err := ioutil.WriteFile(filePath, []byte(parseApplicationTemplate(templateData, *templatePath)), os.ModePerm)
 	if err != nil {
 		util.LogMessageAndExit(fmt.Sprintf("Unable to save %s", filePath))
 	}
-	log.Println("Application config files created successfully!")
+	log.Printf("%s config file created successfully!", fileName)
 }
 
 func parseApplicationTemplate(templateData *ProjectConfig, templateFile string) string {

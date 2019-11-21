@@ -1,0 +1,19 @@
+info:
+
+  application:
+    environment: local
+    baseUrl: http://localhost:{{.AppPort}}
+
+spring:
+{{if eq .EnableJPA true}}
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/{{.AppPort}}?UseUnicode=true&characterEncoding=utf8
+    username: ''
+    password: ''
+
+  jpa:
+    formatSql: true
+{{end}}
+
+server:
+  port: {{.AppPort}}
