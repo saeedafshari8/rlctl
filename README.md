@@ -30,26 +30,31 @@ to create the project.
      flixinit java [flags]
 **Flags:**
 
-        --app-host string              Spring application base url host (default localhost) (default "localhost")
-        --app-port string              Spring boot application port (default is 8080) (default "8080")
-        --app-protocol string          Spring application base url protocol (default http (default "http")
-    -v, --app-version string           Spring boot application version (default is empty and there will not be any version defined for the project)
-        --azure-ad                     Enable Azure Active Directory (default false)
-    -i, --container-image string       Docker exposed port (default is openjdk:11.0.5-jdk-stretch) (default "openjdk:11.0.5-jdk-stretch")
-    -p, --container-port string        Docker exposed port (default is 8080) (default "8080")
-        --database string              JPA Database Name (default is MYSQL) (default "MYSQL")
-        --description string           Spring application description
-    -g, --group string                 Spring application groupId (default is empty)
-    -h, --help                         help for java
-    -j, --java-version string          Gradle (java)sourceCompatibility version (default is 11) (default "11")
-        --jpa                          Enable JPA-Hibernate (default is true) (default true)
-    -l, --language string              Spring project language [java | kotlin | groovy] (default is java) (default "java")
-        --liquibase                    Enable Liquibase migration (default is false)
-        --name string                  Spring application name
-        --oauth2                       Enable OAuth2 (default false)
-        --security                     Enable Spring security (default false)
-        --spring-boot-version string   Spring boot version (default is 2.2.1.RELEASE) (default "2.2.1.RELEASE")
-    -t, --type string                  Spring project type [gradle-project | maven-project] (default is gradle-project) (default "gradle-project")
+     --app-host string               Spring application base url host (default localhost) (default "localhost")
+          --app-port string               Spring boot application port (default is 8080) (default "8080")
+          --app-protocol string           Spring application base url protocol (default http (default "http")
+      -v, --app-version string            Spring boot application version (default is empty and there will not be any version defined for the project)
+          --azure-ad                      Enable Azure Active Directory (default false)
+      -i, --container-image string        Docker exposed port (default is openjdk:11.0.5-jdk-stretch) (default "openjdk:11.0.5-jdk-stretch")
+      -p, --container-port string         Docker exposed port (default is 8080) (default "8080")
+          --database string               JPA Database Name (default is MYSQL) (default "MYSQL")
+          --description string            Spring application description
+          --docker-registry string        Docker Registry URL (default is https://index.docker.io/v1) (default "https://index.docker.io/v1")
+          --git-remote string             git remote repository url
+          --gitlabci                      Create .gitlab-ci config (default is true) (default true)
+          --gitlabci-except stringArray   .gitlab-ci except (default is schedules) (default [schedules])
+          --gitlabci-tags stringArray     .gitlab-ci tags (default is docker,autoscaling) (default [docker,autoscaling])
+      -g, --group string                  Spring application groupId (default is empty)
+      -h, --help                          help for java
+      -j, --java-version string           Gradle (java)sourceCompatibility version (default is 11) (default "11")
+          --jpa                           Enable JPA-Hibernate (default is true) (default true)
+      -l, --language string               Spring project language [java | kotlin | groovy] (default is java) (default "java")
+          --liquibase                     Enable Liquibase migration (default is false)
+          --name string                   Spring application name
+          --oauth2                        Enable OAuth2 (default false)
+          --security                      Enable Spring security (default false)
+          --spring-boot-version string    Spring boot version (default is 2.2.1.RELEASE) (default "2.2.1.RELEASE")
+      -t, --type string                   Spring project type [gradle-project | maven-project] (default is gradle-project) (default "gradle-project")
 
 
 # Installing

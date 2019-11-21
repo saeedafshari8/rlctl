@@ -10,6 +10,7 @@ import (
 
 type JavaProjectConfig struct {
 	SpringProjectConfig spring.ProjectConfig
+	GitConfig           util.Git
 }
 
 const (
@@ -37,6 +38,11 @@ var (
 				spring.ParseAndSaveCiCdFile(projectRootPath, &javaProjectConfig.SpringProjectConfig)
 				log.Println("build.gradle template compiled!")
 			}
+
+			util.GitInitNewRepo(projectRootPath)
+			util.GitAddAll(projectRootPath)
+			util.GitAddRemote(projectRootPath, javaProjectConfig.GitConfig.RepositoryUrl)
+			util.GitCommit(projectRootPath, "Initial Commit!")
 		},
 	}
 )
@@ -56,6 +62,7 @@ func init() {
 	cmdJava.Flags().BoolP("gitlabci", "", true, "Create .gitlab-ci config (default is true)")
 	cmdJava.Flags().StringArrayP("gitlabci-tags", "", []string{"docker", "autoscaling"}, ".gitlab-ci tags (default is docker,autoscaling)")
 	cmdJava.Flags().StringArrayP("gitlabci-except", "", []string{"schedules"}, ".gitlab-ci except (default is schedules)")
+	cmdJava.Flags().StringP("git-remote", "", "", "git remote repository url")
 	cmdJava.Flags().StringP("java-version", "j", "11", "Gradle (java)sourceCompatibility version (default is 11)")
 	cmdJava.Flags().BoolP("jpa", "", true, "Enable JPA-Hibernate (default is true)")
 	cmdJava.Flags().BoolP("liquibase", "", false, "Enable Liquibase migration (default is false)")
@@ -92,6 +99,7 @@ func initJavaConfig(cmd *cobra.Command) {
 	checkValue(javaProjectConfig.SpringProjectConfig.Name, NameArg)
 	javaProjectConfig.SpringProjectConfig.Group = getValue(cmd, GroupArg)
 	checkValue(javaProjectConfig.SpringProjectConfig.Group, GroupArg)
+	javaProjectConfig.GitConfig.RepositoryUrl = getValue(cmd, "git-remote")
 
 	//Optional flags
 	javaProjectConfig.SpringProjectConfig.Type = getValue(cmd, "type")
