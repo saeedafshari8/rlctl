@@ -43,65 +43,68 @@ type ProjectConfig struct {
 	GitLabCIConfig             GitLabCI
 }
 
-func DownloadSpringApplication(config ProjectConfig) string {
-	url := compileInitializerUrl(config)
-	files, err := get(url)
-	util.LogAndExit(err, util.NetworkError)
+func DownloadSpringApplication(config ProjectConfig) (string, error) {
+	url, err := compileInitializerUrl(config)
+	if err != nil {
+		return "", err
+	}
+	files, err := downloadAndUnzip(url)
+	if err != nil {
+		return "", err
+	}
 	for _, fileName := range files {
 		log.Println(fileName)
 	}
 	projectPath := path.Join(util.OutputDirectory, config.Name)
 	log.Printf("Spring Boot project created successfully under :%s \n", projectPath)
-	return projectPath
+	return projectPath, nil
 }
 
-func get(url string) ([]string, error) {
+func downloadAndUnzip(url string) ([]string, error) {
+	request, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
 	ch := make(chan util.ChannelResponse)
-	go fetch(url, ch)
+	defer close(ch)
+	go util.MakeHttpRequest(request, ch)
 	channelResponse := <-ch
 	if channelResponse.Success {
-		files, err := util.Unzip(channelResponse.Message, util.OutputDirectory)
+		fileName, err := util.GenerateTemporaryFileName()
+		if err != nil {
+			return nil, err
+		}
+		if err = ioutil.WriteFile(fileName, channelResponse.Data, os.ModePerm); err != nil {
+			return nil, err
+		}
+		files, err := util.Unzip(fileName, util.OutputDirectory)
 		// Remove the temp file
-		err = os.Remove(channelResponse.Message)
+		err = os.Remove(fileName)
 		if err == nil {
-			log.Printf("Unable to delete %s\n", channelResponse.Message)
+			return nil, err
 		}
 		return files, err
 	}
 	return nil, channelResponse.Error
 }
 
-func fetch(url string, ch chan<- util.ChannelResponse) {
-	response, err := http.Get(url)
-	if err != nil {
-		ch <- util.ChannelResponse{Error: err, Success: false, Message: fmt.Sprint(err)}
-		return
-	}
-	defer response.Body.Close()
-
-	responseData, err := ioutil.ReadAll(response.Body)
-
-	if err != nil {
-		ch <- util.ChannelResponse{Error: err, Success: false, Message: fmt.Sprint(err)}
-		return
-	}
-	fileName := util.GenerateTemporaryFileName()
-	if err = ioutil.WriteFile(fileName, responseData, os.ModePerm); err != nil {
-		ch <- util.ChannelResponse{Error: err, Success: false, Message: fmt.Sprint(err)}
-		return
-	}
-	ch <- util.ChannelResponse{Error: nil, Success: true, Message: fileName}
-}
-
-func compileInitializerUrl(config ProjectConfig) string {
+func compileInitializerUrl(config ProjectConfig) (string, error) {
 	dir, err := os.Getwd()
-	util.LogAndExit(err, util.EnvironmentError)
+	if err != nil {
+		return "", err
+	}
 	file, err := ioutil.ReadFile(fmt.Sprintf("%s/%s", dir, springInitializerUrlTemplate))
-	util.LogAndExit(err, util.FileNotFound)
+	if err != nil {
+		return "", err
+	}
 	t, err := template.New(springInitializerUrlTemplate).Parse(string(file))
-	util.LogAndExit(err, util.InvalidTemplate)
-	var tmpl bytes.Buffer
-	err = t.ExecuteTemplate(&tmpl, springInitializerUrlTemplate, config)
-	util.LogAndExit(err, util.InvalidTemplate)
-	return tmpl.String()
+	if err != nil {
+		return "", err
+	}
+	tmpl := &bytes.Buffer{}
+	err = t.ExecuteTemplate(tmpl, springInitializerUrlTemplate, config)
+	if err != nil {
+		return "", err
+	}
+	return tmpl.String(), nil
 }

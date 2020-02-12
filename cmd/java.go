@@ -28,7 +28,8 @@ var (
 		Run: func(cmd *cobra.Command, args []string) {
 			initJavaConfig(cmd)
 
-			projectRootPath := spring.DownloadSpringApplication(javaProjectConfig.SpringProjectConfig)
+			projectRootPath, err := spring.DownloadSpringApplication(javaProjectConfig.SpringProjectConfig)
+			util.LogAndExit(err, util.NetworkError)
 
 			switch javaProjectConfig.SpringProjectConfig.Type {
 			case spring.Gradle:
@@ -75,58 +76,34 @@ func init() {
 	cmdJava.Flags().StringP("type", "t", spring.Gradle, "Spring project type [gradle-project | maven-project] (default is gradle-project)")
 }
 
-func getValue(cmd *cobra.Command, key string) string {
-	s, err := cmd.Flags().GetString(key)
-	util.LogAndExit(err, util.ArgMissing)
-	return s
-}
-
-func getValueBool(cmd *cobra.Command, key string) bool {
-	b, err := cmd.Flags().GetBool(key)
-	util.LogAndExit(err, util.ArgMissing)
-	return b
-}
-
-func getValues(cmd *cobra.Command, key string) []string {
-	b, err := cmd.Flags().GetStringArray(key)
-	util.LogAndExit(err, util.ArgMissing)
-	return b
-}
-
 func initJavaConfig(cmd *cobra.Command) {
 	//Mandatory flags
-	javaProjectConfig.SpringProjectConfig.Name = getValue(cmd, NameArg)
-	checkValue(javaProjectConfig.SpringProjectConfig.Name, NameArg)
-	javaProjectConfig.SpringProjectConfig.Group = getValue(cmd, GroupArg)
-	checkValue(javaProjectConfig.SpringProjectConfig.Group, GroupArg)
-	javaProjectConfig.GitConfig.RepositoryUrl = getValue(cmd, "git-remote")
+	javaProjectConfig.SpringProjectConfig.Name = util.GetValue(cmd, NameArg)
+	util.ValidateRequired(javaProjectConfig.SpringProjectConfig.Name, NameArg)
+	javaProjectConfig.SpringProjectConfig.Group = util.GetValue(cmd, GroupArg)
+	util.ValidateRequired(javaProjectConfig.SpringProjectConfig.Group, GroupArg)
+	javaProjectConfig.GitConfig.RepositoryUrl = util.GetValue(cmd, "git-remote")
 
 	//Optional flags
-	javaProjectConfig.SpringProjectConfig.Type = getValue(cmd, "type")
-	javaProjectConfig.SpringProjectConfig.Description = getValue(cmd, "description")
-	javaProjectConfig.SpringProjectConfig.Language = getValue(cmd, "language")
-	javaProjectConfig.SpringProjectConfig.SpringBootVersion = getValue(cmd, "spring-boot-version")
-	javaProjectConfig.SpringProjectConfig.AppVersion = getValue(cmd, "app-version")
-	javaProjectConfig.SpringProjectConfig.JavaVersion = getValue(cmd, "java-version")
-	javaProjectConfig.SpringProjectConfig.DockerConfig.ExposedPort = getValue(cmd, "container-port")
-	javaProjectConfig.SpringProjectConfig.DockerConfig.Image = getValue(cmd, "container-image")
-	javaProjectConfig.SpringProjectConfig.AppProtocol = getValue(cmd, "app-protocol")
-	javaProjectConfig.SpringProjectConfig.AppHost = getValue(cmd, "app-host")
-	javaProjectConfig.SpringProjectConfig.AppPort = getValue(cmd, "app-port")
-	javaProjectConfig.SpringProjectConfig.EnableJPA = getValueBool(cmd, "jpa")
-	javaProjectConfig.SpringProjectConfig.Database = getValue(cmd, "database")
-	javaProjectConfig.SpringProjectConfig.EnableLiquibase = getValueBool(cmd, "liquibase")
-	javaProjectConfig.SpringProjectConfig.EnableSecurity = getValueBool(cmd, "security")
-	javaProjectConfig.SpringProjectConfig.EnableOAuth2 = getValueBool(cmd, "oauth2")
-	javaProjectConfig.SpringProjectConfig.EnableAzureActiveDirectory = getValueBool(cmd, "azure-ad")
-	javaProjectConfig.SpringProjectConfig.EnableGitLab = getValueBool(cmd, "gitlabci")
-	javaProjectConfig.SpringProjectConfig.DockerConfig.RegistryUrl = getValue(cmd, "docker-registry")
-	javaProjectConfig.SpringProjectConfig.GitLabCIConfig.Tags = getValues(cmd, "gitlabci-tags")
-	javaProjectConfig.SpringProjectConfig.GitLabCIConfig.Excepts = getValues(cmd, "gitlabci-except")
-}
-
-func checkValue(value, key string) {
-	if value == "" {
-		util.LogMessageAndExit(fmt.Sprintf("%s is mandatory!\n", key))
-	}
+	javaProjectConfig.SpringProjectConfig.Type = util.GetValue(cmd, "type")
+	javaProjectConfig.SpringProjectConfig.Description = util.GetValue(cmd, "description")
+	javaProjectConfig.SpringProjectConfig.Language = util.GetValue(cmd, "language")
+	javaProjectConfig.SpringProjectConfig.SpringBootVersion = util.GetValue(cmd, "spring-boot-version")
+	javaProjectConfig.SpringProjectConfig.AppVersion = util.GetValue(cmd, "app-version")
+	javaProjectConfig.SpringProjectConfig.JavaVersion = util.GetValue(cmd, "java-version")
+	javaProjectConfig.SpringProjectConfig.DockerConfig.ExposedPort = util.GetValue(cmd, "container-port")
+	javaProjectConfig.SpringProjectConfig.DockerConfig.Image = util.GetValue(cmd, "container-image")
+	javaProjectConfig.SpringProjectConfig.AppProtocol = util.GetValue(cmd, "app-protocol")
+	javaProjectConfig.SpringProjectConfig.AppHost = util.GetValue(cmd, "app-host")
+	javaProjectConfig.SpringProjectConfig.AppPort = util.GetValue(cmd, "app-port")
+	javaProjectConfig.SpringProjectConfig.EnableJPA = util.GetValueBool(cmd, "jpa")
+	javaProjectConfig.SpringProjectConfig.Database = util.GetValue(cmd, "database")
+	javaProjectConfig.SpringProjectConfig.EnableLiquibase = util.GetValueBool(cmd, "liquibase")
+	javaProjectConfig.SpringProjectConfig.EnableSecurity = util.GetValueBool(cmd, "security")
+	javaProjectConfig.SpringProjectConfig.EnableOAuth2 = util.GetValueBool(cmd, "oauth2")
+	javaProjectConfig.SpringProjectConfig.EnableAzureActiveDirectory = util.GetValueBool(cmd, "azure-ad")
+	javaProjectConfig.SpringProjectConfig.EnableGitLab = util.GetValueBool(cmd, "gitlabci")
+	javaProjectConfig.SpringProjectConfig.DockerConfig.RegistryUrl = util.GetValue(cmd, "docker-registry")
+	javaProjectConfig.SpringProjectConfig.GitLabCIConfig.Tags = util.GetValues(cmd, "gitlabci-tags")
+	javaProjectConfig.SpringProjectConfig.GitLabCIConfig.Excepts = util.GetValues(cmd, "gitlabci-except")
 }

@@ -15,8 +15,8 @@ const (
 
 type ChannelResponse struct {
 	Success bool
-	Message string
 	Error   error
+	Data    []byte
 }
 
 func Error(err error) bool {

@@ -20,15 +20,15 @@ Complete documentation is available at https://github.com/saeedafshari8/flixinit
 # Overview
 # Concepts
 # Commands
-**java**
+##java
 
 Use java command to generate a spring boot application. This command uses [SpringInitializr](https://start.spring.io/) service
 to create the project.
 
-**Usage**:
+###Usage
 
      flixinit java [flags]
-**Flags:**
+####Flags
 
      --app-host string               Spring application base url host (default localhost) (default "localhost")
           --app-port string               Spring boot application port (default is 8080) (default "8080")
@@ -56,6 +56,33 @@ to create the project.
           --spring-boot-version string    Spring boot version (default is 2.2.1.RELEASE) (default "2.2.1.RELEASE")
       -t, --type string                   Spring project type [gradle-project | maven-project] (default is gradle-project) (default "gradle-project")
 
+##gitlab
+
+Use gitlab command to generate a new project in gitlab repository.
+
+###Usage
+
+  flixinit gitlab [flags]
+
+####Flags:
+
+      --approvals_before_merge int32                       How many approvers should approve merge requests by default (default 1)
+      --auto_cancel_pending_pipelines string               Auto-cancel pending pipelines (Note: this is not a boolean, but enabled/disabled (default "enabled")
+      -h, --help                                               help for gitlab
+      -r, --initialize_with_readme                             Initialise by README.md (default true)
+      --name string                                        The name of the new project. Equals path if not provided. (default "n")
+      --namespace_id int32                                 Namespace for the new project (defaults to the current user’s namespace)
+      --only_allow_merge_if_all_discussions_are_resolved   Set whether merge requests can only be merged when all the discussions are resolved (default true)
+      --only_allow_merge_if_pipeline_succeeds              Auto-cancel pending pipelines (Note: this is not a boolean, but enabled/disabled (default true)
+      --path string                                        Repository name for new project. Generated based on name if not provided (generated lowercased with dashes). (default "p")
+      --token string                                       Gitlab token.
+  -v, --visibility string                                  private|internal|public (default "private")
+
+Global Flags:
+  -a, --author string    author name for copyright attribution (default "Saeed Afshari")
+      --config string    config file (default is $HOME/.flixinit.yaml)
+      --license string   name of license for the project (default "Apache 2.0")
+      --viper            use Viper for configuration (default true)
 
 # Installing
 # Getting Started

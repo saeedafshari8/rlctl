@@ -35,6 +35,7 @@ func init() {
 	viper.SetDefault("license", "Apache 2.0")
 
 	rootCmd.AddCommand(cmdJava)
+	rootCmd.AddCommand(cmdGitLab)
 }
 
 func initConfig() {

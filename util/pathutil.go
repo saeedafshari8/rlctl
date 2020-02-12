@@ -26,10 +26,10 @@ func CreateDirIfNotExists(dir *string) {
 	}
 }
 
-func GenerateTemporaryFileName() string {
-	uuid, e := uuid.NewUUID()
-	if e != nil {
-		LogMessageAndExit("UUID creation failed!")
+func GenerateTemporaryFileName() (string, error) {
+	uuid, err := uuid.NewUUID()
+	if err != nil {
+		return "", err
 	}
-	return path.Join(TempDirectory, uuid.String()+".zip")
+	return path.Join(TempDirectory, uuid.String()+".zip"), nil
 }
