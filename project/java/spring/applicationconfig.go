@@ -1,21 +1,20 @@
 package spring
 
 import (
-	"bytes"
 	"fmt"
 	"github.com/saeedafshari8/flixinit/util"
 	"io/ioutil"
 	"log"
 	"os"
 	"path"
-	"text/template"
 )
 
 var (
-	applicationConfigTemplate            = "project/java/spring/config/application.yml.tmpl"
-	applicationLocalConfigTemplate       = "project/java/spring/config/application-local.yml.tmpl"
-	applicationIntegrationConfigTemplate = "project/java/spring/config/application-int.yml.tmpl"
-	applicationProdConfigTemplate        = "project/java/spring/config/application-prod.yml.tmpl"
+	applicationConfigTemplate            = "config/application.yml.tmpl"
+	applicationLocalConfigTemplate       = "config/application-local.yml.tmpl"
+	applicationIntegrationConfigTemplate = "config/application-int.yml.tmpl"
+	applicationProdConfigTemplate        = "config/application-prod.yml.tmpl"
+	liquibaseConfigTemplate              = "config/liquibase-master.xml.tmpl"
 )
 
 func ParseAndSaveAppConfigTemplates(projectRoot string, templateData *ProjectConfig) {
@@ -25,10 +24,17 @@ func ParseAndSaveAppConfigTemplates(projectRoot string, templateData *ProjectCon
 	if (*templateData).EnableLiquibase {
 		liquibaseDbChangeSetPath := path.Join(projectRoot, "src/main/resources/db")
 		util.CreateDirIfNotExists(&liquibaseDbChangeSetPath)
-		cwd, err := os.Getwd()
-		util.LogAndExit(err, util.EnvironmentError)
-		_, err = util.Copy(path.Join(cwd, "project/java/spring/config/liquibase-master.xml.tmpl"),
-			path.Join(liquibaseDbChangeSetPath, "master.xml"))
+
+		liquibaseTemplate, err := util.GetSpringTemplate(liquibaseConfigTemplate)
+		if err != nil {
+			util.LogMessageAndExit("Unable to copy Liquibase master.xml")
+		}
+		liquibaseParsedTemplate, err := util.ParseTemplate(templateData, "master.xml", liquibaseTemplate)
+		if err != nil {
+			util.LogMessageAndExit("Unable to copy Liquibase master.xml")
+		}
+
+		err = ioutil.WriteFile(path.Join(liquibaseDbChangeSetPath, "master.xml"), []byte(liquibaseParsedTemplate), os.ModePerm)
 		if err != nil {
 			util.LogMessageAndExit("Unable to copy Liquibase master.xml")
 		}
@@ -42,22 +48,15 @@ func ParseAndSaveAppConfigTemplates(projectRoot string, templateData *ProjectCon
 
 func compileTemplateAndSave(configPath, templatePath *string, templateData *ProjectConfig, fileName string) {
 	filePath := path.Join(*configPath, fileName)
-	err := ioutil.WriteFile(filePath, []byte(parseApplicationTemplate(templateData, *templatePath)), os.ModePerm)
+	springTemplate, err := util.GetSpringTemplate(*templatePath)
+	util.LogAndExit(err, util.InvalidTemplate)
+
+	parsedTemplate, err := util.ParseTemplate(templateData, fileName, springTemplate)
+	util.LogAndExit(err, util.InvalidTemplate)
+
+	err = ioutil.WriteFile(filePath, []byte(parsedTemplate), os.ModePerm)
 	if err != nil {
 		util.LogMessageAndExit(fmt.Sprintf("Unable to save %s", filePath))
 	}
 	log.Printf("%s config file created successfully!", fileName)
-}
-
-func parseApplicationTemplate(templateData *ProjectConfig, templateFile string) string {
-	dir, err := os.Getwd()
-	util.LogAndExit(err, util.EnvironmentError)
-	file, err := ioutil.ReadFile(fmt.Sprintf("%s/%s", dir, templateFile))
-	util.LogAndExit(err, util.FileNotFound)
-	t, err := template.New(templateFile).Parse(string(file))
-	util.LogAndExit(err, util.InvalidTemplate)
-	var tmpl bytes.Buffer
-	err = t.ExecuteTemplate(&tmpl, templateFile, *templateData)
-	util.LogAndExit(err, util.InvalidTemplate)
-	return tmpl.String()
 }

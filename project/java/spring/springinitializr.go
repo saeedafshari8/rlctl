@@ -1,15 +1,12 @@
 package spring
 
 import (
-	"bytes"
-	"fmt"
 	"github.com/saeedafshari8/flixinit/util"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
 	"path"
-	"text/template"
 )
 
 const (
@@ -17,7 +14,7 @@ const (
 	Gradle                       = "gradle-project"
 	Java                         = "java"
 	SpringBootLatestVersion      = "2.2.1.RELEASE"
-	springInitializerUrlTemplate = "project/java/spring/spring.initializr.tmpl"
+	springInitializerUrlTemplate = "spring.initializr.tmpl"
 )
 
 type ProjectConfig struct {
@@ -44,7 +41,10 @@ type ProjectConfig struct {
 }
 
 func DownloadSpringApplication(config ProjectConfig) (string, error) {
-	url, err := compileInitializerUrl(config)
+	springTemplate, err := util.GetSpringTemplate(springInitializerUrlTemplate)
+	util.LogAndExit(err, util.InvalidTemplate)
+
+	url, err := util.ParseTemplate(&config, springInitializerUrlTemplate, springTemplate)
 	if err != nil {
 		return "", err
 	}
@@ -86,25 +86,4 @@ func downloadAndUnzip(url string) ([]string, error) {
 		return files, err
 	}
 	return nil, channelResponse.Error
-}
-
-func compileInitializerUrl(config ProjectConfig) (string, error) {
-	dir, err := os.Getwd()
-	if err != nil {
-		return "", err
-	}
-	file, err := ioutil.ReadFile(fmt.Sprintf("%s/%s", dir, springInitializerUrlTemplate))
-	if err != nil {
-		return "", err
-	}
-	t, err := template.New(springInitializerUrlTemplate).Parse(string(file))
-	if err != nil {
-		return "", err
-	}
-	tmpl := &bytes.Buffer{}
-	err = t.ExecuteTemplate(tmpl, springInitializerUrlTemplate, config)
-	if err != nil {
-		return "", err
-	}
-	return tmpl.String(), nil
 }

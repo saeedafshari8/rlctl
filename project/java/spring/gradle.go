@@ -1,25 +1,38 @@
 package spring
 
 import (
-	"bytes"
-	"fmt"
 	"github.com/saeedafshari8/flixinit/util"
 	"io/ioutil"
 	"log"
 	"os"
 	"path"
-	"text/template"
 )
 
 const (
-	gradleBuildTemplate         = "project/java/spring/build.gradle.tmpl"
-	dockerfileTemplate          = "project/java/spring/Dockerfile.tmpl"
+	gradleBuildTemplate         = "build.gradle.tmpl"
+	dockerfileTemplate          = "Dockerfile.tmpl"
 	gradleBuildFileRelativePath = "build.gradle"
 	dockerFileRelativePath      = "Dockerfile"
 )
 
 func ParseGradleTemplate(gradleTemplateData *ProjectConfig) string {
-	return parseSpringTemplate(gradleTemplateData, gradleBuildTemplate)
+	springTemplate, err := util.GetSpringTemplate(gradleBuildTemplate)
+	util.LogAndExit(err, util.InvalidTemplate)
+
+	template, err := util.ParseTemplate(gradleTemplateData, gradleBuildTemplate, springTemplate)
+	util.LogAndExit(err, util.InvalidTemplate)
+
+	return template
+}
+
+func ParseDockerTemplate(dockerTemplateData *ProjectConfig) string {
+	springTemplate, err := util.GetSpringTemplate(dockerfileTemplate)
+	util.LogAndExit(err, util.InvalidTemplate)
+
+	template, err := util.ParseTemplate(dockerTemplateData, dockerfileTemplate, springTemplate)
+	util.LogAndExit(err, util.InvalidTemplate)
+
+	return template
 }
 
 func OverwriteGradleBuild(projectRootPath, template string) {
@@ -29,23 +42,6 @@ func OverwriteGradleBuild(projectRootPath, template string) {
 		log.Printf("Unable to overwrite file %s\n", filePath)
 	}
 	log.Printf("%s updated successfully!", filePath)
-}
-
-func ParseDockerTemplate(dockerTemplateData *ProjectConfig) string {
-	return parseSpringTemplate(dockerTemplateData, dockerfileTemplate)
-}
-
-func parseSpringTemplate(templateData *ProjectConfig, templateFile string) string {
-	dir, err := os.Getwd()
-	util.LogAndExit(err, util.EnvironmentError)
-	file, err := ioutil.ReadFile(fmt.Sprintf("%s/%s", dir, templateFile))
-	util.LogAndExit(err, util.FileNotFound)
-	t, err := template.New(templateFile).Parse(string(file))
-	util.LogAndExit(err, util.InvalidTemplate)
-	var tmpl bytes.Buffer
-	err = t.ExecuteTemplate(&tmpl, templateFile, *templateData)
-	util.LogAndExit(err, util.InvalidTemplate)
-	return tmpl.String()
 }
 
 func CreateDockerfile(projectRootPath, template string) {
