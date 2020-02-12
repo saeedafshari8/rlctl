@@ -70,19 +70,23 @@ Use gitlab command to generate a new project in gitlab repository.
       --auto_cancel_pending_pipelines string               Auto-cancel pending pipelines (Note: this is not a boolean, but enabled/disabled (default "enabled")
       -h, --help                                               help for gitlab
       -r, --initialize_with_readme                             Initialise by README.md (default true)
-      --name string                                        The name of the new project. Equals path if not provided. (default "n")
+      -n, --name string                                        The name of the new project. Equals path if not provided.
       --namespace_id int32                                 Namespace for the new project (defaults to the current user’s namespace)
       --only_allow_merge_if_all_discussions_are_resolved   Set whether merge requests can only be merged when all the discussions are resolved (default true)
       --only_allow_merge_if_pipeline_succeeds              Auto-cancel pending pipelines (Note: this is not a boolean, but enabled/disabled (default true)
-      --path string                                        Repository name for new project. Generated based on name if not provided (generated lowercased with dashes). (default "p")
+      -p, --path string                                        Repository name for new project. Generated based on name if not provided (generated lowercased with dashes).
       --token string                                       Gitlab token.
-  -v, --visibility string                                  private|internal|public (default "private")
+      -v, --visibility string                                  private|internal|public (default "private")
 
-Global Flags:
-  -a, --author string    author name for copyright attribution (default "Saeed Afshari")
-      --config string    config file (default is $HOME/.flixinit.yaml)
-      --license string   name of license for the project (default "Apache 2.0")
-      --viper            use Viper for configuration (default true)
+##gitlab namespaces
+To get list of existing namespaces.
+
+###Usage:
+  flixinit gitlab namespaces [flags]
+
+####Flags:
+      -h, --help           help for namespaces
+      --token string   Gitlab token.
 
 # Installing
 # Getting Started
