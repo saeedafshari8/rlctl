@@ -20,15 +20,15 @@ Complete documentation is available at https://github.com/saeedafshari8/flixinit
 # Overview
 # Concepts
 # Commands
-##java
+## java
 
 Use java command to generate a spring boot application. This command uses [SpringInitializr](https://start.spring.io/) service
 to create the project.
 
-###Usage
+### Usage
 
      flixinit java [flags]
-####Flags
+#### Flags
 
      --app-host string               Spring application base url host (default localhost) (default "localhost")
           --app-port string               Spring boot application port (default is 8080) (default "8080")
@@ -56,15 +56,15 @@ to create the project.
           --spring-boot-version string    Spring boot version (default is 2.2.1.RELEASE) (default "2.2.1.RELEASE")
       -t, --type string                   Spring project type [gradle-project | maven-project] (default is gradle-project) (default "gradle-project")
 
-##gitlab
+## gitlab
 
 Use gitlab command to generate a new project in gitlab repository.
 
-###Usage
+### Usage
 
   flixinit gitlab [flags]
 
-####Flags:
+#### Flags:
 
       --approvals_before_merge int32                       How many approvers should approve merge requests by default (default 1)
       --auto_cancel_pending_pipelines string               Auto-cancel pending pipelines (Note: this is not a boolean, but enabled/disabled (default "enabled")
@@ -78,21 +78,36 @@ Use gitlab command to generate a new project in gitlab repository.
       --token string                                       Gitlab token.
       -v, --visibility string                                  private|internal|public (default "private")
 
-##gitlab namespaces
+## gitlab namespaces
 To get list of existing namespaces.
 
-###Usage:
+### Usage:
   flixinit gitlab namespaces [flags]
 
-####Flags:
+#### Flags:
       -h, --help           help for namespaces
       --token string   Gitlab token.
 
 # Installing
+
+The only thing you need to have is the executable file. Thanks packr (https://github.com/gobuffalo/packr/tree/master/v2).
+
+## Build binary
+To build the binary file for a specific operating system, you can execute the following commands in the root of project. 
+
+### MAC OS
+      GOOS=darwin GOARCH=amd64 packr build
+
+### Linux
+      GOOS=linux GOARCH=amd64 packr build
+
+### Windows 
+      GOOS=windows GOARCH=386 packr build
+
 # Getting Started
 **Use the flixinit Generator**
 
-**Example**
+## Example
 
 Example1: Create Spring Boot/Gradle application 
 
