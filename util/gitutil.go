@@ -6,10 +6,6 @@ import (
 	"os/exec"
 )
 
-type Git struct {
-	RepositoryUrl string
-}
-
 func GitInitNewRepo(repoPath string) {
 	cwd, err := os.Getwd()
 	LogAndExit(err, EnvironmentError)

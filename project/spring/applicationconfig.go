@@ -17,7 +17,7 @@ var (
 	liquibaseConfigTemplate              = "config/liquibase-master.xml.tmpl"
 )
 
-func ParseAndSaveAppConfigTemplates(projectRoot string, templateData *ProjectConfig) {
+func ParseAndSaveAppConfigTemplates(projectRoot string, templateData *SpringProjectConfig) {
 	configPath := path.Join(projectRoot, "config")
 	util.CreateDirIfNotExists(&configPath)
 
@@ -46,14 +46,14 @@ func ParseAndSaveAppConfigTemplates(projectRoot string, templateData *ProjectCon
 	compileTemplateAndSave(&configPath, &applicationProdConfigTemplate, templateData, "application-prod.yml")
 }
 
-func compileTemplateAndSave(configPath, templatePath *string, templateData *ProjectConfig, fileName string) {
-	filePath := path.Join(*configPath, fileName)
+func compileTemplateAndSave(configPath, templatePath *string, templateData *SpringProjectConfig, fileName string) {
 	springTemplate, err := util.GetSpringTemplate(*templatePath)
 	util.LogAndExit(err, util.InvalidTemplate)
 
 	parsedTemplate, err := util.ParseTemplate(templateData, fileName, springTemplate)
 	util.LogAndExit(err, util.InvalidTemplate)
 
+	filePath := path.Join(*configPath, fileName)
 	err = ioutil.WriteFile(filePath, []byte(parsedTemplate), os.ModePerm)
 	if err != nil {
 		util.LogMessageAndExit(fmt.Sprintf("Unable to save %s", filePath))

@@ -1,8 +1,10 @@
 package spring
 
 import (
+	"fmt"
 	"github.com/saeedafshari8/flixinit/util"
 	"io/ioutil"
+	"log"
 	"os"
 	"os/exec"
 	"path"
@@ -12,6 +14,7 @@ var (
 	moPath           = "buildpipeline/mo.sh"
 	gitignorePath    = "buildpipeline/.gitignore.tmpl"
 	gitlabCITemplate = "buildpipeline/.gitlab-ci-default.yml"
+	gitlabCI         = ".gitlab-ci.yml"
 )
 
 type GitLabCI struct {
@@ -19,7 +22,7 @@ type GitLabCI struct {
 	Excepts []string
 }
 
-func ParseAndSaveCiCdFile(projectRoot string, templateData *ProjectConfig) {
+func ParseAndSaveCiCdFile(projectRoot string, templateData *SpringProjectConfig) {
 	if (*templateData).EnableGitLab {
 		configPath := path.Join(projectRoot, "build_pipeline")
 		util.CreateDirIfNotExists(&configPath)
@@ -43,5 +46,12 @@ func ParseAndSaveCiCdFile(projectRoot string, templateData *ProjectConfig) {
 		}
 	}
 
-	compileTemplateAndSave(&projectRoot, &gitlabCITemplate, templateData, ".gitlab-ci.yml")
+	parsedTemplate, err := util.ParseTemplate(templateData, gitlabCI, gitlabCITemplate)
+
+	filePath := path.Join(projectRoot, gitlabCI)
+	err = ioutil.WriteFile(filePath, []byte(parsedTemplate), os.ModePerm)
+	if err != nil {
+		util.LogMessageAndExit(fmt.Sprintf("Unable to save %s", filePath))
+	}
+	log.Printf("%s config file created successfully!", gitlabCI)
 }

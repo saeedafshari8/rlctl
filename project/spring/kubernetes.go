@@ -12,7 +12,7 @@ const (
 	K8SStagingTemplate = "kubernetes/stg/kube-config.yml"
 )
 
-func parseK8STemplates(projectConfig *ProjectConfig) (string, string) {
+func parseK8STemplates(projectConfig *SpringProjectConfig) (string, string) {
 	prodTmplStr, err := util.GetSpringTemplate(K8SProdTemplate)
 	util.LogAndExit(err, util.InvalidTemplate)
 
@@ -28,7 +28,7 @@ func parseK8STemplates(projectConfig *ProjectConfig) (string, string) {
 	return parsedProdTemplate, parsedStgTemplate
 }
 
-func SaveK8sTemplates(projectRoot *string, projectConfig *ProjectConfig) {
+func SaveK8sTemplates(projectRoot *string, projectConfig *SpringProjectConfig) {
 	prod, stg := parseK8STemplates(projectConfig)
 
 	kubernetesConfigPath := path.Join(*projectRoot, "kubernetes")
