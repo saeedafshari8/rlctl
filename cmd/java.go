@@ -5,7 +5,6 @@ import (
 	"github.com/saeedafshari8/flixinit/project/java/spring"
 	"github.com/saeedafshari8/flixinit/util"
 	"github.com/spf13/cobra"
-	"log"
 )
 
 type JavaProjectConfig struct {
@@ -37,7 +36,7 @@ var (
 				spring.CreateDockerfile(projectRootPath, spring.ParseDockerTemplate(&javaProjectConfig.SpringProjectConfig))
 				spring.ParseAndSaveAppConfigTemplates(projectRootPath, &javaProjectConfig.SpringProjectConfig)
 				spring.ParseAndSaveCiCdFile(projectRootPath, &javaProjectConfig.SpringProjectConfig)
-				log.Println("build.gradle template compiled!")
+				spring.SaveK8sTemplates(&projectRootPath, &javaProjectConfig.SpringProjectConfig)
 			}
 
 			util.GitInitNewRepo(projectRootPath)
@@ -58,7 +57,7 @@ func init() {
 	cmdJava.Flags().StringP("container-image", "i", "openjdk:11.0.5-jdk-stretch", "Docker exposed port (default is openjdk:11.0.5-jdk-stretch)")
 	cmdJava.Flags().StringP("description", "", "", "Spring application description")
 	cmdJava.Flags().StringP("database", "", "MYSQL", "JPA Database Name (default is MYSQL)")
-	cmdJava.Flags().StringP("docker-registry", "", "https://index.docker.io/v1", "Docker Registry URL (default is https://index.docker.io/v1)")
+	cmdJava.Flags().StringP("docker-registry", "", "dcr.flix.tech/charter/cust", "Docker Registry URL (default is https://index.docker.io/v1)")
 	cmdJava.Flags().StringP("group", "g", "", "Spring application groupId (default is empty)")
 	cmdJava.Flags().BoolP("gitlabci", "", true, "Create .gitlab-ci config (default is true)")
 	cmdJava.Flags().StringArrayP("gitlabci-tags", "", []string{"docker", "autoscaling"}, ".gitlab-ci tags (default is docker,autoscaling)")

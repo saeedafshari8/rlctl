@@ -4,6 +4,7 @@ import (
 	"github.com/saeedafshari8/flixinit/util"
 	"io/ioutil"
 	"os"
+	"os/exec"
 	"path"
 )
 
@@ -24,9 +25,15 @@ func ParseAndSaveCiCdFile(projectRoot string, templateData *ProjectConfig) {
 		util.CreateDirIfNotExists(&configPath)
 
 		mo, err := util.GetSpringTemplate(moPath)
-		err = ioutil.WriteFile(path.Join(configPath, "mo.sh"), []byte(mo), os.ModePerm)
+		moFilePath := path.Join(configPath, "mo.sh")
+		err = ioutil.WriteFile(moFilePath, []byte(mo), os.ModePerm)
 		if err != nil {
 			util.LogMessageAndExit("Unable to copy mo.sh")
+		}
+
+		_, err = exec.Command("chmod", "777", moFilePath).Output()
+		if err != nil {
+			util.LogMessageAndExit("Unable to make mo.sh executable!")
 		}
 
 		gitignore, err := util.GetSpringTemplate(gitignorePath)

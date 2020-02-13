@@ -1,6 +1,13 @@
 variables:
   DOCKER_REPO:           {{.DockerConfig.RegistryUrl}}
   PROJECT_BUILDER:       {{.DockerConfig.Image}}
+  DEPLOYER:              dcr.mfb.io/flixos/gitlab-ci-image:latest
+  K8S_DEV_NAMESPACE:     charter-cust-stg
+  K8S_PROD_NAMESPACE:    charter-cust
+  K8S_EKS_DEV_CLUSTER:   ew1d2
+  K8S_EKS_PROD_CLUSTER:  ew1p3
+  STG_DIRECTORY:         kubernetes-stg
+  PROD_DIRECTORY:        kubernetes-prod
 
 {{ if eq .Type "gradle-project"}}
 before_script:
@@ -92,5 +99,48 @@ pack:
     - docker rmi      $IMAGE_NAME
   tags: {{ range $index, $element := .GitLabCIConfig.Tags}}
     - {{$element}}{{end}}
+  only:
+    - tags
+
+# Create K8s Yml configuration files for latest stable release
+prepare-before-release:
+  image: bash:3.2.57
+  stage: prepare
+  cache: {}
+  variables:
+    IMAGE_NAME:     $DOCKER_REPO/{{.Name}}:$CI_COMMIT_TAG
+  before_script:
+    - export VERSION=$(echo ${CI_COMMIT_REF_SLUG} | cut -d'-' -f 1-3)
+  script:
+    - mkdir $PROD_DIRECTORY
+    - mkdir $STG_DIRECTORY
+    - cat kubernetes/prod/kube-config.yml                      | build_pipeline/mo.sh > $PROD_DIRECTORY/deployment.yml
+    - cat kubernetes/stg/kube-config.yml                       | build_pipeline/mo.sh > $STG_DIRECTORY/kube-config.yml
+  artifacts:
+    paths: [$PROD_DIRECTORY, $STG_DIRECTORY]
+    expire_in: 7 days
+  tags: [docker, autoscaling]
+  only:
+    - master
+    - tags
+
+deploy-version:
+  image: $DEPLOYER
+  stage: deploy
+  script:
+    - kubectl  --context $K8S_EKS_DEV_CLUSTER --namespace=$K8S_DEV_NAMESPACE  apply -f $STG_DIRECTORY
+  tags:
+    - charter-dev-eu-west-1
+  only:
+    - tags
+
+deploy-manual:
+  image: $DEPLOYER
+  stage: deploy
+  script:
+    - kubectl --context $K8S_EKS_PROD_CLUSTER apply -f $PROD_DIRECTORY
+  tags:
+    - charter-prod-eu-west-1
+  when: manual
   only:
     - tags

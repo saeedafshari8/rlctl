@@ -1,0 +1,80 @@
+## Created by FlixInit
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: {{.Name}}
+  namespace: charter-cust
+  labels:
+    app: {{.Name}}
+    branch: master
+spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: {{.Name}}
+    spec:
+      containers:
+        - name: {{.Name}}
+          image: {{"{{ IMAGE_NAME }}"}}
+          command: ["java"]
+          args: ["-jar", "-javaagent:newrelic.jar", "-Dnewrelic.environment=prod",  "-Dnewrelic.config.file=config/newrelic.yml", "-XX:+UseG1GC", "-Xmx4g", "app.jar"]
+          ports:
+            - containerPort: 8080
+          resources:
+            requests:
+              memory: "1.5Gi"
+              cpu: "0.6"
+            limits:
+              memory: "5Gi"
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 100
+            periodSeconds: 3
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 600
+            periodSeconds: 3
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "prod"
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: charter-customer-db-password
+                  key: password
+            - name: DB_HOST_K8S
+              valueFrom:
+                configMapKeyRef:
+                  name: charter-db-config
+                  key:  db-host-prod
+
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: {{.Name}}
+  namespace: charter-cust
+  labels:
+    expose: http
+    access: public
+spec:
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 8080
+  selector:
+    app: {{.Name}}
+
+---
