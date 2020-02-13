@@ -50,6 +50,36 @@ checkstyle: {{ if eq .Type "gradle-project"}}
   except:{{ range $index, $element := .GitLabCIConfig.Excepts}}
     - {{$element}}{{end}}
   {{end}}
+
+# Execute code style check & Tests
+test:
+  image: $PROJECT_BUILDER
+  stage: check
+  cache:
+    paths:
+      - .gradle/wrapper
+      - .gradle/caches
+    policy: pull
+  script:
+    - ./gradlew check --build-cache --parallel
+  artifacts:
+  tags: [docker, autoscaling]
+  except: [schedules]
+
+# Execute Sonar check
+SonarQube Check:
+  image: dcr.flix.tech/charter/cust/sonnar-scanner
+  stage: sonar
+  cache:
+    policy: pull
+  script:
+    - sonar-scanner -Dsonar.gitlab.commit_sha=${CI_COMMIT_SHA} -Dsonar.gitlab.ref_name=${CI_COMMIT_REF_SLUG} -Dsonar.gitlab.project_id=${CI_PROJECT_ID} -Dsonar.projectVersion=${CI_COMMIT_REF_SLUG}
+  tags: [docker, autoscaling]
+  except: [schedules]
+  only:
+    - tags
+  allow_failure: true
+
 # Create Docker image based on release tag
 pack:
   stage: pack

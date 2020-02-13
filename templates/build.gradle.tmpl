@@ -22,3 +22,83 @@ dependencies {
 test {
 	useJUnitPlatform()
 }
+
+def allTestCoverageFile = "$buildDir/jacoco/allTestCoverage.exec"
+def allITCoverageFile = "$buildDir/jacoco/allITCoverage.exec"
+
+jacoco {
+	toolVersion = "0.8.2"
+}
+
+task jacocoMergeTest(type: JacocoMerge) {
+	destinationFile = file(allTestCoverageFile)
+	executionData = project.fileTree(dir: '.', include: '**/build/jacoco/test.exec')
+}
+
+task jacocoMergeIntegrationTest(type: JacocoMerge) {
+	destinationFile = file(allITCoverageFile)
+	// merge all the it coverage outputs from all projects into one
+	executionData = project.fileTree(dir: '.', includes: ['**/build/jacoco/integrationTest.exec'])
+}
+
+task jacocoMerge(dependsOn: ['jacocoMergeTest', 'jacocoMergeIntegrationTest']) {
+}
+
+jacocoTestReport {
+	group = "verification"
+	description = "Generate Jacoco coverage reports after running tests."
+
+	executionData.setFrom(fileTree(dir: 'build/jacoco', include: '**/*.exec'))
+
+	reports {
+		xml {
+			enabled true
+			//Following value is a file
+			destination file("${buildDir}/reports/jacoco/xml/jacoco.xml")
+		}
+		csv.enabled false
+		html {
+			enabled true
+			//Following value is a folder
+			destination file("${buildDir}/reports/jacoco/html")
+		}
+	}
+
+	afterEvaluate {
+		classDirectories.setFrom(files(classDirectories.files.collect {
+			fileTree(
+					dir: it,
+					exclude: [
+							'**/dto/**',
+							'**/controller/**'
+					]
+			)
+		}))
+	}
+
+	sourceDirectories.setFrom(files(sourceSets.main.allSource.srcDirs))
+	classDirectories.setFrom(files(sourceSets.main.output.classesDirs))
+}
+
+sonarqube {
+	properties {
+		property "sonar.host.url", "https://sonar.mfb.io"
+		property "sonar.java.source", "1.{{.JavaVersion}}"
+		property "sonar.login", "04ea568319221bcc3852d24cfefe887efce5a3d3"
+		property "sonar.gitlab.user_token", "Ga7bxxmyoX3tTgLAkgsT"
+		property "sonar.projectKey", "{{.Name}}"
+		property "sonar.projectName", "{{.Name}}"
+		property "sonar.exclusions", "**/*.png,**/*.pdf, **/*.js, **/*.html, **/*.properties, **/*Dto.java, **/*Eto.java, **/*Rto.java, **/*Predicate*.java"
+		property "sonar.sourceEncoding", "UTF-8"
+		property "sonar.java.binaries", "${project.buildDir}"
+		property "sonar.junit.reportPaths", "./build/test-results/test,./build/test-results/integrationTest"
+		property "sonar.jacoco.reportPaths", allTestCoverageFile
+		property "sonar.jacoco.itReportPath", allITCoverageFile
+		property "sonar.tests", "src/test,src/integrationTest"
+		property "sonar.sources", "src/main"
+		property "sonar.dynamicAnalysis", "reuseReports"
+		property "sonar.gitlab.query_max_retry", "500"
+		property "sonar.gitlab.query_wait", "10000"
+		property "sonar.gitlab.quality_gate_fail_mode", "warn"
+	}
+}
