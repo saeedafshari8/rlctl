@@ -46,7 +46,8 @@ func ParseAndSaveCiCdFile(projectRoot string, templateData *SpringProjectConfig)
 		}
 	}
 
-	parsedTemplate, err := util.ParseTemplate(templateData, gitlabCI, gitlabCITemplate)
+	templateStr, err := util.GetSpringTemplate(gitlabCITemplate)
+	parsedTemplate, err := util.ParseTemplate(templateData, gitlabCI, templateStr)
 
 	filePath := path.Join(projectRoot, gitlabCI)
 	err = ioutil.WriteFile(filePath, []byte(parsedTemplate), os.ModePerm)

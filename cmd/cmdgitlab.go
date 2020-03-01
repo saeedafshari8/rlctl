@@ -39,8 +39,7 @@ var (
 		Short: "gitlab command get list of existing namespaces.",
 		Long:  `gitlab command get list of existing namespaces.`,
 		Run: func(cmd *cobra.Command, args []string) {
-			token := util.GetValue(cmd, Token)
-			util.ValidateRequired(token, Token)
+			token := getOrSetToken(cmd)
 
 			namespaces, err := gitlab.GitGetNamespaces(token)
 			util.LogAndExit(err, util.NetworkError)
@@ -84,8 +83,7 @@ func init() {
 
 func initGitlabConfig(cmd *cobra.Command) {
 	//Mandatory flags
-	gitlabConfig.Token = util.GetValue(cmd, Token)
-	util.ValidateRequired(gitlabConfig.Token, Token)
+	getOrSetToken(cmd)
 	gitlabConfig.Name = util.GetValue(cmd, Name)
 	util.ValidateRequired(gitlabConfig.Name, Name)
 	gitlabConfig.NamespaceID = util.GetValueInt32(cmd, NamespaceID)
@@ -101,4 +99,15 @@ func initGitlabConfig(cmd *cobra.Command) {
 	gitlabConfig.OnlyAllowMergeIfAllDiscussionsAreResolved = util.GetValueBool(cmd, OnlyAllowMergeIfAllDiscussionsAreResolved)
 	gitlabConfig.ApprovalsBeforeMerge = util.GetValueInt32(cmd, ApprovalsBeforeMerge)
 	gitlabConfig.InitializeWithReadme = util.GetValueBool(cmd, InitializeWithReadme)
+}
+
+func getOrSetToken(cmd *cobra.Command) string {
+	gitlabConfig.Token = util.GetValue(cmd, Token)
+	if len(gitlabConfig.Token) == 0 {
+		gitlabConfig.Token = util.GetGitlabToken()
+	} else {
+		util.SetGitlabToken(gitlabConfig.Token)
+	}
+	util.ValidateRequired(gitlabConfig.Token, Token)
+	return gitlabConfig.Token
 }
