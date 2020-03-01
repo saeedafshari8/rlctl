@@ -19,6 +19,7 @@ type SpringProjectConfig struct {
 	EnableOAuth2               bool
 	EnableAzureActiveDirectory bool
 	EnableGitLab               bool
+	EnableKafka                bool
 	DockerConfig               Docker
 	GitLabCIConfig             GitLabCI
 }

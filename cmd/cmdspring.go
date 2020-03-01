@@ -1,4 +1,4 @@
-package spring
+package cmd
 
 import (
 	"fmt"
@@ -26,6 +26,7 @@ var (
 			initSpringCmdConfig(cmd)
 
 			projectRootPath, err := spring.GenerateSpringProject(&springProjectConfig)
+
 			util.LogAndExit(err, util.NetworkError)
 
 			log.Printf("Spring Boot project created successfully under :%s \n", projectRootPath)
@@ -35,7 +36,7 @@ var (
 				if springProjectConfig.Language == spring.Java {
 					spring.OverwriteJavaGradleBuild(&projectRootPath, &springProjectConfig)
 				} else if springProjectConfig.Language == spring.Kotlin {
-
+					spring.OverwriteKotlinGradleBuild(&projectRootPath, &springProjectConfig)
 				}
 				spring.CreateGradleDockerfile(&projectRootPath, &springProjectConfig)
 			}
@@ -79,6 +80,7 @@ func initGradleCmdFlags() {
 	SpringCommand.Flags().StringP("name", "", "", "Spring application name")
 	SpringCommand.Flags().BoolP("oauth2", "", false, "Enable OAuth2 (default false)")
 	SpringCommand.Flags().BoolP("security", "", false, "Enable Spring security (default false)")
+	SpringCommand.Flags().BoolP("kafka", "", false, "Enable Kafka integration")
 	SpringCommand.Flags().StringP("spring-boot-version", "", spring.SpringBootLatestVersion,
 		fmt.Sprintf("Spring boot version (default is %s)", spring.SpringBootLatestVersion))
 	SpringCommand.Flags().StringP("type", "t", spring.Gradle, "Spring project type [gradle-project | maven-project] (default is gradle-project)")
@@ -111,6 +113,7 @@ func initSpringCmdConfig(cmd *cobra.Command) {
 	springProjectConfig.EnableOAuth2 = util.GetValueBool(cmd, "oauth2")
 	springProjectConfig.EnableAzureActiveDirectory = util.GetValueBool(cmd, "azure-ad")
 	springProjectConfig.EnableGitLab = util.GetValueBool(cmd, "gitlabci")
+	springProjectConfig.EnableKafka = util.GetValueBool(cmd, "kafka")
 	springProjectConfig.DockerConfig.RegistryUrl = util.GetValue(cmd, "docker-registry")
 	springProjectConfig.GitLabCIConfig.Tags = util.GetValues(cmd, "gitlabci-tags")
 	springProjectConfig.GitLabCIConfig.Excepts = util.GetValues(cmd, "gitlabci-except")

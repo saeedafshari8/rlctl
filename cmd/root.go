@@ -3,7 +3,6 @@ package cmd
 import (
 	"fmt"
 	"github.com/mitchellh/go-homedir"
-	"github.com/saeedafshari8/flixinit/cmd/spring"
 	"github.com/saeedafshari8/flixinit/util"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -32,7 +31,7 @@ func init() {
 
 	initFlags()
 
-	rootCmd.AddCommand(spring.SpringCommand)
+	rootCmd.AddCommand(SpringCommand)
 	rootCmd.AddCommand(cmdGitLab)
 }
 
