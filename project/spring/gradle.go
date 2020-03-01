@@ -10,12 +10,14 @@ import (
 )
 
 var (
-	gradleBuildTemplate         = "build.gradle.tmpl"
-	kotlinTemplate              = "build.gradle.kts"
-	KotlinTemplatePath          = fmt.Sprintf("spring/kotlin/%s", kotlinTemplate)
-	dockerfileTemplate          = "Dockerfile.tmpl"
-	gradleBuildFileRelativePath = "build.gradle"
-	dockerFileRelativePath      = "Dockerfile"
+	gradleBuildTemplate          = "build.gradle.tmpl"
+	kotlinDslTemplate            = "build.gradle.kts"
+	kotlinDslSettingTemplate     = "settings.gradle.kts"
+	kotlinDslTemplatePath        = fmt.Sprintf("spring/kotlin/%s", kotlinDslTemplate)
+	kotlinSettingDslTemplatePath = fmt.Sprintf("spring/kotlin/%s", kotlinDslSettingTemplate)
+	dockerfileTemplate           = "Dockerfile.tmpl"
+	gradleBuildFileRelativePath  = "build.gradle"
+	dockerFileRelativePath       = "Dockerfile"
 )
 
 func OverwriteJavaGradleBuild(projectRootPath *string, springProjectConfig *SpringProjectConfig) {
@@ -30,16 +32,29 @@ func OverwriteJavaGradleBuild(projectRootPath *string, springProjectConfig *Spri
 }
 
 func OverwriteKotlinGradleBuild(projectRootPath *string, springProjectConfig *SpringProjectConfig) error {
-	templateStr, err := util.GetSpringTemplate(KotlinTemplatePath)
+	settingDslFilePath := path.Join(*projectRootPath, kotlinDslSettingTemplate)
+
+	err := overwriteKotlinTemplate(springProjectConfig, &settingDslFilePath, &kotlinSettingDslTemplatePath)
 	if err != nil {
 		return err
 	}
-	parsedTemplate, err := util.ParseTemplate(springProjectConfig, kotlinTemplate, templateStr)
+
+	dslFilePath := path.Join(*projectRootPath, kotlinDslTemplate)
+	err = overwriteKotlinTemplate(springProjectConfig, &dslFilePath, &kotlinDslTemplatePath)
+
+	return err
+}
+
+func overwriteKotlinTemplate(springProjectConfig *SpringProjectConfig, filePath, templatePath *string) error {
+	templateStr, err := util.GetSpringTemplate(*templatePath)
 	if err != nil {
 		return err
 	}
-	filePath := path.Join(*projectRootPath, kotlinTemplate)
-	err = ioutil.WriteFile(filePath, []byte(parsedTemplate), os.ModePerm)
+	parsedTemplate, err := util.ParseTemplate(springProjectConfig, "tmp", templateStr)
+	if err != nil {
+		return err
+	}
+	err = ioutil.WriteFile(*filePath, []byte(parsedTemplate), os.ModePerm)
 	if err != nil {
 		return err
 	}

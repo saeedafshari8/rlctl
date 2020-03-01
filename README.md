@@ -111,7 +111,7 @@ To build the binary file for a specific operating system, you can execute the fo
 
 Example1: Create Spring Boot/Gradle application 
 
-    flixinit java --group=charter.flixbus.com --name=testApp -v=1.0.0 --liquibase=true --jpa=true
+    flixinit spring --group=charter.flixbus.com --name=testApp -v=1.0.0 --liquibase=true --jpa=true --language=kotlin --kafka=true
 
 The above command create a spring boot/gradle application with the following config:
 * groupId = charter.flixbus.com
