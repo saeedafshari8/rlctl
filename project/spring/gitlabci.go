@@ -23,7 +23,7 @@ type GitLabCI struct {
 }
 
 func ParseAndSaveCiCdFile(projectRoot string, templateData *SpringProjectConfig) {
-	if (*templateData).EnableGitLab {
+	if (*templateData).EnableGitLabCI {
 		configPath := path.Join(projectRoot, "build_pipeline")
 		util.CreateDirIfNotExists(&configPath)
 

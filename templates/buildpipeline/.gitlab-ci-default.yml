@@ -9,7 +9,7 @@ variables:
   STG_DIRECTORY:         kubernetes-stg
   PROD_DIRECTORY:        kubernetes-prod
 
-{{ if eq .Type "gradle-project"}}
+{{ if eq .BuildTool "gradle-project"}}
 before_script:
   - export GRADLE_USER_HOME=`pwd`/.gradle
 
@@ -31,7 +31,7 @@ stages:
 build:
   image: $PROJECT_BUILDER
   stage: build
-  script:{{ if eq .Type "gradle-project"}}
+  script:{{ if eq .BuildTool "gradle-project"}}
     - ./gradlew clean build -x test --build-cache --parallel{{end}}
   artifacts:
     paths: [build/libs, build/reports, build/classes]
@@ -41,7 +41,7 @@ build:
     - {{$element}}{{end}}
 
 # Execute code style check & Tests
-checkstyle: {{ if eq .Type "gradle-project"}}
+checkstyle: {{ if eq .BuildTool "gradle-project"}}
   image: $PROJECT_BUILDER
   stage: check
   cache:

@@ -7,8 +7,8 @@ plugins {
 }
 
 group = '{{.Group}}'
-{{if (ne .AppVersion "")}}version = '{{.AppVersion}}'{{end}}
-sourceCompatibility = '{{.JavaVersion}}'
+{{if (ne .Version "")}}version = '{{.Version}}'{{end}}
+sourceCompatibility = '{{.JavaSourceCompatibility}}'
 
 repositories {
 	mavenCentral()
@@ -16,6 +16,7 @@ repositories {
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter'
+	compile 'org.springframework.boot:spring-boot-starter-web'
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 	}
@@ -85,7 +86,7 @@ jacocoTestReport {
 sonarqube {
 	properties {
 		property "sonar.host.url", "https://sonar.mfb.io"
-		property "sonar.java.source", "1.{{.JavaVersion}}"
+		property "sonar.java.source", "1.{{.JavaSourceCompatibility}}"
 		property "sonar.login", "04ea568319221bcc3852d24cfefe887efce5a3d3"
 		property "sonar.gitlab.user_token", "Ga7bxxmyoX3tTgLAkgsT"
 		property "sonar.projectKey", "{{.Name}}"

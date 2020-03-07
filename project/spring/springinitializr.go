@@ -13,7 +13,7 @@ const (
 	Gradle                       = "gradle-project"
 	Java                         = "java"
 	Kotlin                       = "kotlin"
-	SpringBootLatestVersion      = "2.2.4.RELEASE"
+	SpringBootLatestVersion      = "2.2.5.RELEASE"
 	springInitializerUrlTemplate = "spring.initializr.tmpl"
 )
 
@@ -35,8 +35,8 @@ func GenerateSpringProject(config *SpringProjectConfig) (string, error) {
 	return path.Join(util.OutputDirectory, (*config).Name), nil
 }
 
-func downloadAndUnzip(url *string) ([]string, error) {
-	request, err := http.NewRequest("GET", *url, nil)
+func downloadAndUnzip(downloadUrl *string) ([]string, error) {
+	request, err := http.NewRequest("GET", *downloadUrl, nil)
 	if err != nil {
 		return nil, err
 	}

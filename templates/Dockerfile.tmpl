@@ -5,4 +5,4 @@ CMD [ "-jar", "/app.jar" ]
 ENTRYPOINT [ "java" ]
 
 COPY "config" "config"
-COPY "build/libs/{{.Name}}-{{.AppVersion}}.jar" "/app.jar"
+COPY "build/libs/{{.Name}}-{{.Version}}.jar" "/app.jar"

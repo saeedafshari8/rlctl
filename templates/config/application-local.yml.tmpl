@@ -2,12 +2,12 @@ info:
 
   application:
     environment: local
-    baseUrl: http://localhost:{{.AppPort}}
+    baseUrl: http://localhost:{{.ServerPort}}
 
 spring:
 {{if eq .EnableJPA true}}
   datasource:
-    url: jdbc:mysql://127.0.0.1:3306/{{.AppPort}}?UseUnicode=true&characterEncoding=utf8
+    url: jdbc:mysql://127.0.0.1:3306/{{.ServerPort}}?UseUnicode=true&characterEncoding=utf8
     username: ''
     password: ''
 
@@ -16,4 +16,4 @@ spring:
 {{end}}
 
 server:
-  port: {{.AppPort}}
+  port: {{.ServerPort}}

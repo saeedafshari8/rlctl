@@ -3,7 +3,7 @@
 info:
     application:
         name: {{.Name}}
-        baseUrl: {{.AppProtocol}}://{{.AppHost}}:{{.AppPort}}
+        baseUrl: {{.ServerProtocol}}://{{.ServerHost}}:{{.ServerPort}}
 
 endpoints:
     shutdown:
@@ -22,7 +22,7 @@ spring:
     # JPA (JpaBaseConfiguration, HibernateJpaAutoConfiguration)
     jpa:
         show-sql: false
-        database: {{.Database}}
+        database: {{.JpaDatabase}}
         hibernate:
             naming:
                 physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
@@ -51,7 +51,7 @@ logging:
         com.google.maps.OkHttpRequestHandler: 'ERROR'
 
 server:
-    port: {{.AppPort}}
+    port: {{.ServerPort}}
     compression:
         enabled: true
         mimeTypes: 'application/json,application/xml,application/javascript,text/html,text/xml,text/plain'
