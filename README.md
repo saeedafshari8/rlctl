@@ -1,4 +1,4 @@
-![rlctl](logo.png)
+![rlctl](rlctl.png)
 # Rlctl
 
 Rlctl is a simple CLI tool to make your application a great tenant for cloud environments.
