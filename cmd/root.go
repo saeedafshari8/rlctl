@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/saeedafshari8/flixinit/util"
+	"github.com/rocketlaunchercloud/rlctl/util"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"log"
@@ -13,12 +13,12 @@ var (
 	userLicense string
 
 	rootCmd = &cobra.Command{
-		Use:   "flixinit",
-		Short: "Flixinit is a simple CLI tool to make your application a great tenant for cloud environments",
-		Long: `Flixinit is a simple CLI tool to make your application a great tenant for cloud environments.
-Complete documentation is available at https://github.com/saeedafshari8/flixinit`,
+		Use:   "rlctl",
+		Short: "Rlctl is a simple CLI tool to make your application a great tenant for cloud environments",
+		Long: `RlCtl is a simple CLI tool to make your application a great tenant for cloud environments.
+Complete documentation is available at https://github.com/rocketlaunchercloud/rlctl`,
 		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Println("Run flixinit -h for help.")
+			fmt.Println("Run rlctl -h for help.")
 		},
 	}
 )

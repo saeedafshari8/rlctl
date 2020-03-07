@@ -2,7 +2,7 @@ package spring
 
 import (
 	"fmt"
-	"github.com/saeedafshari8/flixinit/util"
+	"github.com/rocketlaunchercloud/rlctl/util"
 	"io/ioutil"
 	"log"
 	"os"

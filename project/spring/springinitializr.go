@@ -1,7 +1,7 @@
 package spring
 
 import (
-	"github.com/saeedafshari8/flixinit/util"
+	"github.com/rocketlaunchercloud/rlctl/util"
 	"io/ioutil"
 	"net/http"
 	"os"

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/saeedafshari8/flixinit/cmd"
+	"github.com/rocketlaunchercloud/rlctl/cmd"
 )
 
 func main() {

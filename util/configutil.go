@@ -32,9 +32,9 @@ func InitConfig() {
 
 	viper.AddConfigPath(home)
 	viper.SetConfigType("yaml")
-	viper.SetConfigName(".flixinit")
+	viper.SetConfigName(".rlctl")
 
-	configName := ".flixinit.yaml"
+	configName := ".rlctl.yaml"
 	configPath := path.Join(home, configName)
 	_, err = os.Stat(configPath)
 	if os.IsNotExist(err) {

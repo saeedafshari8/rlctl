@@ -1,7 +1,7 @@
-![flixinit](logo.png)
-# Flixinit
+![rlctl](logo.png)
+# Rlctl
 
-Flixinit is a simple CLI tool to make your application a great tenant for cloud environments.
+Rlctl is a simple CLI tool to make your application a great tenant for cloud environments.
 
 # Table of Contents
 
@@ -10,9 +10,9 @@ Flixinit is a simple CLI tool to make your application a great tenant for cloud 
   * [Commands](#commands)
     * [spring](#spring)
     * [gitlab](#gitlab)
-      * [namespaces](#namespaces)
+      * [namespaces](#gitlab-namespaces)
 - [Installing](#installing)
-  * [Building binary](#bulding-binary)
+  * [Building binary](#building-binary)
     * [MAC OS](#mac-os)
     * [Linux](#Linux)
     * [Windows](#Windows)
@@ -48,7 +48,7 @@ and specially with emerge of Microservices architecture, it has become even more
 With the new architecture, teams needs to create more and more fine-grained projects and continuously involve in system integrations.
 Therefore, one of the consequences of migrating from monolith to scalable Microservices which are aligned with business needs is acceptance
 of the fact for creating and integrating new smaller granular systems. 
-To do so, we started flixinit to help developers bring concentrate back on writing codes instead of repeating time consuming amd error prone 
+To do so, we started Rlctl to help developers bring concentrate back on writing codes instead of repeating time consuming amd error prone 
 tasks of project provisioning.     
 
 # Concepts
@@ -61,7 +61,7 @@ to create the project.
 
 ***Usage***
 
-`flixinit spring [flags]`
+`rlctl spring [flags]`
 
 ***Flags***
 
@@ -101,9 +101,9 @@ Use gitlab command to generate a new project in gitlab repository.
 
 ***Usage***
 
-`flixinit gitlab [flags]`
+`rlctl gitlab [flags]`
 
-`flixinit gitlab [command]`
+`rlctl gitlab [command]`
 
 ***Available Commands***:
 
@@ -129,7 +129,7 @@ namespaces  gitlab command get list of existing namespaces.
 To get list of existing namespaces.
 
 ***Usage***
-`flixinit gitlab namespaces [flags]`
+`rlctl gitlab namespaces [flags]`
 
 ***Flags***
 
@@ -156,13 +156,16 @@ To build the binary file for a specific operating system, you can execute the fo
 
 # Getting Started
 
-## Example1: Create Spring Boot-Gradle application** 
+## Example1*** 
+***Create Spring Boot-Gradle application***
 
-`flixinit spring --group=charter.flixbus.com --name=testApp -v=1.0.0 --liquibase=true --jpa=true --language=kotlin --kafka=true --git-remote=https://git.com/...`
+`rlctl spring --group=charter.flixbus.com --name=testApp -v=1.0.0 --liquibase=true --jpa=true --language=kotlin --kafka=true --git-remote=https://git.com/...`
     
-## Example2: Create Spring Boot-Gradle with all flags placed** 
+## Example2
 
-`flixinit spring --group=com.example --name=sample --description="Sample application" --language=java --version=0.0.1 --java-source-compatibility=11 --build-tool=gradle-project --spring-boot-version=2.2.5.RELEASE --server-port=9090 --server-host=0.0.0.0 --server-protocol=http --jpa-enabled=true --jpa-database=MYSQL --liquibase-enabled=true --security-enabled=true --security-oauth2=true --kafka-enabled=true --azure-enabled=true --container-port=9999 --container-image=jdk-11.0.6_10-alpine-slim --container-registry=dcr.flix.tech/charter/cust --gitlab-ci-enabled=true --gitlab-ci-tags=docker --gitlab-ci-tags=autoscaling --gitlab-ci-except=schedules`
+***Create Spring Boot-Gradle with all flags placed*** 
+
+`rlctl spring --group=com.example --name=sample --description="Sample application" --language=java --version=0.0.1 --java-source-compatibility=11 --build-tool=gradle-project --spring-boot-version=2.2.5.RELEASE --server-port=9090 --server-host=0.0.0.0 --server-protocol=http --jpa-enabled=true --jpa-database=MYSQL --liquibase-enabled=true --security-enabled=true --security-oauth2=true --kafka-enabled=true --azure-enabled=true --container-port=9999 --container-image=jdk-11.0.6_10-alpine-slim --container-registry=dcr.flix.tech/charter/cust --gitlab-ci-enabled=true --gitlab-ci-tags=docker --gitlab-ci-tags=autoscaling --gitlab-ci-except=schedules`
 
 The above command create a spring boot/gradle application with the following config:
 - groupId = charter.flixbus.com
@@ -175,4 +178,4 @@ The above command create a spring boot/gradle application with the following con
 # Contributing
 # License
 
-flixinit is released under the Apache 2.0 license. See [LICENSE.txt](https://github.com/saeedafshari8/flixinit/blob/master/LICENSE.txt)
+rlctl is released under the Apache 2.0 license. See [LICENSE.txt](https://github.com/rocketlaunchercloud/rlctl/blob/master/LICENSE.txt)
