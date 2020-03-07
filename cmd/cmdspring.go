@@ -28,6 +28,12 @@ const (
 	kafkaEnabled            = "kafka-enabled"
 	azureEnabled            = "azure-enabled"
 
+	sonarEnabled   = "sonar-enabled"
+	sonarVersion   = "sonar-version"
+	sonarLogin     = "sonar-login"
+	sonarUserToken = "sonar-user-token"
+	sonarHost      = "sonar-host"
+
 	containerPort     = "container-port"
 	containerImage    = "container-image"
 	containerRegistry = "container-registry"
@@ -107,6 +113,12 @@ func initGradleCmdFlags() {
 	SpringCommand.Flags().StringP(springBootVersion, "", spring.SpringBootLatestVersion, "Spring boot version")
 	SpringCommand.Flags().StringP(buildTool, "", spring.Gradle, "Spring project type [gradle-project | maven-project]")
 
+	SpringCommand.Flags().BoolP(sonarEnabled, "", false, "Enable SonarQube integration")
+	SpringCommand.Flags().StringP(sonarHost, "", "", "SonarQuebe host")
+	SpringCommand.Flags().StringP(sonarUserToken, "", "", "SonarQuebe user token")
+	SpringCommand.Flags().StringP(sonarLogin, "", "", "SonarQuebe login")
+	SpringCommand.Flags().StringP(sonarVersion, "", "2.7", "SonarQuebe library version")
+
 	SpringCommand.Flags().StringP(containerPort, "", "8080", "Docker exposed port")
 	SpringCommand.Flags().StringP(containerImage, "", "openjdk:11.0.5-jdk-stretch", "Docker exposed port")
 	SpringCommand.Flags().StringP(containerRegistry, "", "dcr.flix.tech/charter/cust", "Docker Registry URL")
@@ -142,6 +154,12 @@ func initSpringCmdConfig(cmd *cobra.Command) {
 	springProjectConfig.EnableOAuth2 = util.GetValueBool(cmd, securityOauth2)
 	springProjectConfig.EnableAzureActiveDirectory = util.GetValueBool(cmd, azureEnabled)
 	springProjectConfig.EnableKafka = util.GetValueBool(cmd, kafkaEnabled)
+
+	springProjectConfig.EnableSonar = util.GetValueBool(cmd, sonarEnabled)
+	springProjectConfig.SonarHost = util.GetValue(cmd, sonarHost)
+	springProjectConfig.SonarLogin = util.GetValue(cmd, sonarLogin)
+	springProjectConfig.SonarUserToken = util.GetValue(cmd, sonarUserToken)
+	springProjectConfig.SonarVersion = util.GetValue(cmd, sonarVersion)
 
 	springProjectConfig.DockerConfig.ExposedPort = util.GetValue(cmd, containerPort)
 	springProjectConfig.DockerConfig.Image = util.GetValue(cmd, containerImage)

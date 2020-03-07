@@ -21,7 +21,7 @@ buildscript {
 plugins {
     id("org.springframework.boot") version "2.2.1.RELEASE"
     id("io.spring.dependency-management") version "1.0.8.RELEASE"
-    id("org.sonarqube") version "2.7"
+    {{if eq .EnableSonar true}}id("org.sonarqube") version "2.7"{{end}}
     id("jacoco")
     id("net.ltgt.apt") version "0.8"
     id("com.diffplug.gradle.spotless") version "3.26.1"
@@ -198,26 +198,34 @@ tasks.withType<Checkstyle>().configureEach {
 }
 // end of Checkstyle
 
-// sonarqube
 val allTestCoverageFile = "$buildDir/jacoco/allTestCoverage.exec"
 val allITCoverageFile = "$buildDir/jacoco/allITCoverage.exec"
+{{if eq .EnableSonar true}}
+// sonarqube
 sonarqube {
     properties {
-        property("sonar.host.url", "https://sonar.mfb.io")
-        property("sonar.login", "04ea568319221bcc3852d24cfefe887efce5a3d3")
-        property("sonar.gitlab.user_token", "Ga7bxxmyoX3tTgLAkgsT")
-        property("sonar.projectKey", "charter-finance-backend")
-        property("sonar.projectName", "Charter-Finance-Backend")
-        property("sonar.java.binaries", "${project.buildDir}")
-        property("sonar.junit.reportPaths", "./build/test-results/test,./build/test-results/integrationTest")
-        property("sonar.jacoco.reportPaths", allTestCoverageFile)
-        property("sonar.jacoco.itReportPath", allITCoverageFile)
-        property("sonar.tests", "src/test,src/integrationTest")
-        property("sonar.sources", "src/main")
-        property("sonar.exclusions", "**/*.js")
+        property "sonar.host.url", "{{.SonarHost}}"
+        property "sonar.java.source", "1.{{.JavaSourceCompatibility}}"
+        property "sonar.login", "{{.SonarLogin}}"
+        property "sonar.gitlab.user_token", "{{.SonarUserToken}}"
+        property "sonar.projectKey", "{{.Name}}"
+        property "sonar.projectName", "{{.Name}}"
+        property "sonar.exclusions", "**/*.png,**/*.pdf, **/*.js, **/*.html, **/*.properties, **/*Dto.java, **/*Eto.java, **/*Rto.java, **/*Predicate*.java"
+        property "sonar.sourceEncoding", "UTF-8"
+        property "sonar.java.binaries", "${project.buildDir}"
+        property "sonar.junit.reportPaths", "./build/test-results/test,./build/test-results/integrationTest"
+        property "sonar.jacoco.reportPaths", allTestCoverageFile
+        property "sonar.jacoco.itReportPath", allITCoverageFile
+        property "sonar.tests", "src/test,src/integrationTest"
+        property "sonar.sources", "src/main"
+        property "sonar.dynamicAnalysis", "reuseReports"
+        property "sonar.gitlab.query_max_retry", "500"
+        property "sonar.gitlab.query_wait", "10000"
+        property "sonar.gitlab.quality_gate_fail_mode", "warn"
     }
 }
-
+// end of sonarqube
+{{end}}
 task<JacocoMerge>("jacocoMergeTest") {
     destinationFile = file(allTestCoverageFile)
     executionData = project.fileTree(mapOf("dir" to ".", "include" to "**/build/jacoco/test.exec"))
@@ -265,8 +273,6 @@ tasks.withType<JacocoReport> {
         }))
     }
 }
-
-// end of sonarqube
 
 // kafka
 {{if eq .EnableKafka true}}
