@@ -20,6 +20,11 @@ type SpringProjectConfig struct {
 	EnableAzureActiveDirectory bool
 	EnableGitLabCI             bool
 	EnableKafka                bool
+	EnableSonar                bool
+	SonarHost                  string
+	SonarLogin                 string
+	SonarUserToken             string
+	SonarVersion               string
 	DockerConfig               Docker
 	GitLabCIConfig             GitLabCI
 }

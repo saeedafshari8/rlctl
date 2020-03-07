@@ -3,7 +3,9 @@ plugins {
 	id 'io.spring.dependency-management' version '1.0.8.RELEASE'
 	id 'java'
 	id "jacoco"
-    id "org.sonarqube" version "2.7"
+{{if eq .EnableSonar true}}
+    id "org.sonarqube" version "{{.SonarVersion}}"
+{{end}}
 }
 
 group = '{{.Group}}'
@@ -83,12 +85,13 @@ jacocoTestReport {
 	classDirectories.setFrom(files(sourceSets.main.output.classesDirs))
 }
 
+{{if eq .EnableSonar true}}
 sonarqube {
 	properties {
-		property "sonar.host.url", "https://sonar.mfb.io"
+		property "sonar.host.url", "{{.SonarHost}}"
 		property "sonar.java.source", "1.{{.JavaSourceCompatibility}}"
-		property "sonar.login", "04ea568319221bcc3852d24cfefe887efce5a3d3"
-		property "sonar.gitlab.user_token", "Ga7bxxmyoX3tTgLAkgsT"
+		property "sonar.login", "{{.SonarLogin}}"
+		property "sonar.gitlab.user_token", "{{.SonarUserToken}}"
 		property "sonar.projectKey", "{{.Name}}"
 		property "sonar.projectName", "{{.Name}}"
 		property "sonar.exclusions", "**/*.png,**/*.pdf, **/*.js, **/*.html, **/*.properties, **/*Dto.java, **/*Eto.java, **/*Rto.java, **/*Predicate*.java"
@@ -105,3 +108,4 @@ sonarqube {
 		property "sonar.gitlab.quality_gate_fail_mode", "warn"
 	}
 }
+{{end}}

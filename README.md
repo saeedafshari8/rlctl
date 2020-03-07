@@ -156,7 +156,8 @@ To build the binary file for a specific operating system, you can execute the fo
 
 # Getting Started
 
-## Example1*** 
+## Example1
+
 ***Create Spring Boot-Gradle application***
 
 `rlctl spring --group=charter.flixbus.com --name=testApp -v=1.0.0 --liquibase=true --jpa=true --language=kotlin --kafka=true --git-remote=https://git.com/...`
@@ -165,7 +166,7 @@ To build the binary file for a specific operating system, you can execute the fo
 
 ***Create Spring Boot-Gradle with all flags placed*** 
 
-`rlctl spring --group=com.example --name=sample --description="Sample application" --language=java --version=0.0.1 --java-source-compatibility=11 --build-tool=gradle-project --spring-boot-version=2.2.5.RELEASE --server-port=9090 --server-host=0.0.0.0 --server-protocol=http --jpa-enabled=true --jpa-database=MYSQL --liquibase-enabled=true --security-enabled=true --security-oauth2=true --kafka-enabled=true --azure-enabled=true --container-port=9999 --container-image=jdk-11.0.6_10-alpine-slim --container-registry=dcr.flix.tech/charter/cust --gitlab-ci-enabled=true --gitlab-ci-tags=docker --gitlab-ci-tags=autoscaling --gitlab-ci-except=schedules`
+`rlctl spring --group=com.example --name=sample --description="Sample application" --language=java --version=0.0.1 --java-source-compatibility=11 --build-tool=gradle-project --spring-boot-version=2.2.5.RELEASE --server-port=9090 --server-host=0.0.0.0 --server-protocol=http --jpa-enabled=true --jpa-database=MYSQL --liquibase-enabled=true --security-enabled=true --security-oauth2=true --kafka-enabled=true --azure-enabled=true --container-port=9999 --container-image=jdk-11.0.6_10-alpine-slim --container-registry=dcr.flix.tech/charter/cust --gitlab-ci-enabled=true --gitlab-ci-tags=docker --gitlab-ci-tags=autoscaling --gitlab-ci-except=schedules --sonar-enabled=true`
 
 The above command create a spring boot/gradle application with the following config:
 - groupId = charter.flixbus.com

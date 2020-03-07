@@ -23,7 +23,7 @@ stages:
   - prepare
   - build
   - check
-  - sonar
+  {{if eq .EnableSonar true}}- sonar{{end}}
   - pack
   - deploy
 
@@ -73,6 +73,7 @@ test:
   tags: [docker, autoscaling]
   except: [schedules]
 
+{{if eq .EnableSonar true}}
 # Execute Sonar check
 SonarQube Check:
   image: dcr.flix.tech/charter/cust/sonnar-scanner
@@ -86,6 +87,7 @@ SonarQube Check:
   only:
     - tags
   allow_failure: true
+{{end}}
 
 # Create Docker image based on release tag
 pack:
