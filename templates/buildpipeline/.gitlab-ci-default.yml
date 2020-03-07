@@ -1,11 +1,11 @@
 variables:
   DOCKER_REPO:           {{.DockerConfig.RegistryUrl}}
   PROJECT_BUILDER:       {{.DockerConfig.Image}}
-  DEPLOYER:              dcr.mfb.io/flixos/gitlab-ci-image:latest
-  K8S_DEV_NAMESPACE:     charter-cust-stg
-  K8S_PROD_NAMESPACE:    charter-cust
-  K8S_EKS_DEV_CLUSTER:   ew1d2
-  K8S_EKS_PROD_CLUSTER:  ew1p3
+  DEPLOYER:              {{.GitLabCIConfig.Deployer}}
+  K8S_DEV_NAMESPACE:     {{.GitLabCIConfig.K8SDevNamespace}}
+  K8S_PROD_NAMESPACE:    {{.GitLabCIConfig.K8SProdNamespace}}
+  K8S_EKS_DEV_CLUSTER:   {{.GitLabCIConfig.K8SDevCluster}}
+  K8S_EKS_PROD_CLUSTER:  {{.GitLabCIConfig.K8SProdCluster}}
   STG_DIRECTORY:         kubernetes-stg
   PROD_DIRECTORY:        kubernetes-prod
 
@@ -62,6 +62,7 @@ checkstyle: {{ if eq .BuildTool "gradle-project"}}
 test:
   image: $PROJECT_BUILDER
   stage: check
+  {{ if eq .BuildTool "gradle-project"}}
   cache:
     paths:
       - .gradle/wrapper
@@ -69,9 +70,12 @@ test:
     policy: pull
   script:
     - ./gradlew check --build-cache --parallel
+  {{end}}
   artifacts:
-  tags: [docker, autoscaling]
-  except: [schedules]
+  tags:{{ range $index, $element := .GitLabCIConfig.Tags}}
+  - {{$element}}{{end}}
+  except:{{ range $index, $element := .GitLabCIConfig.Excepts}}
+  - {{$element}}{{end}}
 
 {{if eq .EnableSonar true}}
 # Execute Sonar check
@@ -82,8 +86,10 @@ SonarQube Check:
     policy: pull
   script:
     - sonar-scanner -Dsonar.gitlab.commit_sha=${CI_COMMIT_SHA} -Dsonar.gitlab.ref_name=${CI_COMMIT_REF_SLUG} -Dsonar.gitlab.project_id=${CI_PROJECT_ID} -Dsonar.projectVersion=${CI_COMMIT_REF_SLUG}
-  tags: [docker, autoscaling]
-  except: [schedules]
+  tags:{{ range $index, $element := .GitLabCIConfig.Tags}}
+  - {{$element}}{{end}}
+  except:{{ range $index, $element := .GitLabCIConfig.Excepts}}
+  - {{$element}}{{end}}
   only:
     - tags
   allow_failure: true
@@ -99,14 +105,14 @@ pack:
     - docker build -t $IMAGE_NAME .
     - docker push     $IMAGE_NAME
     - docker rmi      $IMAGE_NAME
-  tags: {{ range $index, $element := .GitLabCIConfig.Tags}}
-    - {{$element}}{{end}}
+  tags:{{ range $index, $element := .GitLabCIConfig.Tags}}
+  - {{$element}}{{end}}
   only:
     - tags
 
 # Create K8s Yml configuration files for latest stable release
 prepare-before-release:
-  image: bash:3.2.57
+  image: {{.DockerConfig.BashImage}}
   stage: prepare
   cache: {}
   variables:
@@ -121,7 +127,8 @@ prepare-before-release:
   artifacts:
     paths: [$PROD_DIRECTORY, $STG_DIRECTORY]
     expire_in: 7 days
-  tags: [docker, autoscaling]
+  tags:{{ range $index, $element := .GitLabCIConfig.Tags}}
+  - {{$element}}{{end}}
   only:
     - master
     - tags
@@ -130,9 +137,9 @@ deploy-version:
   image: $DEPLOYER
   stage: deploy
   script:
-    - kubectl  --context $K8S_EKS_DEV_CLUSTER --namespace=$K8S_DEV_NAMESPACE  apply -f $STG_DIRECTORY
-  tags:
-    - charter-dev-eu-west-1
+    - kubectl --context $K8S_EKS_DEV_CLUSTER --namespace=$K8S_DEV_NAMESPACE  apply -f $STG_DIRECTORY
+  tags:{{ range $index, $element := .GitLabCIConfig.K8SDeployStagingEnvTags}}
+  - {{$element}}{{end}}
   only:
     - tags
 
@@ -141,8 +148,8 @@ deploy-manual:
   stage: deploy
   script:
     - kubectl --context $K8S_EKS_PROD_CLUSTER apply -f $PROD_DIRECTORY
-  tags:
-    - charter-prod-eu-west-1
+  tags:{{ range $index, $element := .GitLabCIConfig.K8SDeployProdEnvTags}}
+  - {{$element}}{{end}}
   when: manual
   only:
     - tags
