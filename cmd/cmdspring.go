@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"github.com/rocketlaunchercloud/rlctl/project/git"
 	"github.com/rocketlaunchercloud/rlctl/project/spring"
 	"github.com/rocketlaunchercloud/rlctl/util"
 	"github.com/spf13/cobra"
@@ -27,20 +28,13 @@ const (
 	securityOauth2          = "security-oauth2"
 	kafkaEnabled            = "kafka-enabled"
 	azureEnabled            = "azure-enabled"
+	gitlabCIEnabled         = "gitlab-ci-enabled"
 
 	sonarEnabled   = "sonar-enabled"
 	sonarVersion   = "sonar-version"
 	sonarLogin     = "sonar-login"
 	sonarUserToken = "sonar-user-token"
 	sonarHost      = "sonar-host"
-
-	containerPort     = "container-port"
-	containerImage    = "container-image"
-	containerRegistry = "container-registry"
-
-	gitlabCIEnabled = "gitlab-ci-enabled"
-	gitlabCITags    = "gitlab-ci-tags"
-	gitlabCIExcept  = "gitlab-ci-except"
 
 	gitRepoUrl = "git-repo-url"
 )
@@ -75,7 +69,16 @@ var (
 			}
 
 			spring.ParseAndSaveAppConfigTemplates(projectRootPath, &springProjectConfig)
-			spring.ParseAndSaveCiCdFile(projectRootPath, &springProjectConfig)
+
+			if (springProjectConfig).EnableGitLabCI {
+				spring.ParseAndSaveCiCdFile(projectRootPath, &springProjectConfig)
+			}
+
+			err = git.ParseAndSaveGitIgnore(projectRootPath)
+			if err != nil {
+				util.LogMessageAndExit("Unable to copy .gitignore")
+			}
+
 			spring.SaveK8sTemplates(&projectRootPath, &springProjectConfig)
 
 			if gitRepositoryUrl != "" {
@@ -112,6 +115,7 @@ func initGradleCmdFlags() {
 	SpringCommand.Flags().BoolP(kafkaEnabled, "", false, "Enable Kafka integration")
 	SpringCommand.Flags().StringP(springBootVersion, "", spring.SpringBootLatestVersion, "Spring boot version")
 	SpringCommand.Flags().StringP(buildTool, "", spring.Gradle, "Spring project type [gradle-project | maven-project]")
+	SpringCommand.Flags().BoolP(gitlabCIEnabled, "", true, "Create .gitlab-ci config")
 
 	SpringCommand.Flags().BoolP(sonarEnabled, "", false, "Enable SonarQube integration")
 	SpringCommand.Flags().StringP(sonarHost, "", "", "SonarQuebe host")
@@ -119,13 +123,9 @@ func initGradleCmdFlags() {
 	SpringCommand.Flags().StringP(sonarLogin, "", "", "SonarQuebe login")
 	SpringCommand.Flags().StringP(sonarVersion, "", "2.7", "SonarQuebe library version")
 
-	SpringCommand.Flags().StringP(containerPort, "", "8080", "Docker exposed port")
-	SpringCommand.Flags().StringP(containerImage, "", "openjdk:11.0.5-jdk-stretch", "Docker exposed port")
-	SpringCommand.Flags().StringP(containerRegistry, "", "dcr.flix.tech/charter/cust", "Docker Registry URL")
+	spring.AddDockerFlagsToCommand(SpringCommand)
 
-	SpringCommand.Flags().BoolP(gitlabCIEnabled, "", true, "Create .gitlab-ci config")
-	SpringCommand.Flags().StringArrayP(gitlabCITags, "", []string{"docker", "autoscaling"}, ".gitlab-ci tags")
-	SpringCommand.Flags().StringArrayP(gitlabCIExcept, "", []string{"schedules"}, ".gitlab-ci except")
+	spring.AddGitlabCIFlagsToCommand(SpringCommand)
 
 	SpringCommand.Flags().StringP(gitRepoUrl, "", "", "git remote repository url")
 }
@@ -154,6 +154,7 @@ func initSpringCmdConfig(cmd *cobra.Command) {
 	springProjectConfig.EnableOAuth2 = util.GetValueBool(cmd, securityOauth2)
 	springProjectConfig.EnableAzureActiveDirectory = util.GetValueBool(cmd, azureEnabled)
 	springProjectConfig.EnableKafka = util.GetValueBool(cmd, kafkaEnabled)
+	springProjectConfig.EnableGitLabCI = util.GetValueBool(cmd, gitlabCIEnabled)
 
 	springProjectConfig.EnableSonar = util.GetValueBool(cmd, sonarEnabled)
 	springProjectConfig.SonarHost = util.GetValue(cmd, sonarHost)
@@ -161,13 +162,9 @@ func initSpringCmdConfig(cmd *cobra.Command) {
 	springProjectConfig.SonarUserToken = util.GetValue(cmd, sonarUserToken)
 	springProjectConfig.SonarVersion = util.GetValue(cmd, sonarVersion)
 
-	springProjectConfig.DockerConfig.ExposedPort = util.GetValue(cmd, containerPort)
-	springProjectConfig.DockerConfig.Image = util.GetValue(cmd, containerImage)
-	springProjectConfig.DockerConfig.RegistryUrl = util.GetValue(cmd, containerRegistry)
+	springProjectConfig.DockerConfig = spring.CreateDockerInstanceFromCommandFlags(cmd)
 
-	springProjectConfig.EnableGitLabCI = util.GetValueBool(cmd, gitlabCIEnabled)
-	springProjectConfig.GitLabCIConfig.Tags = util.GetValues(cmd, gitlabCITags)
-	springProjectConfig.GitLabCIConfig.Excepts = util.GetValues(cmd, gitlabCIExcept)
+	springProjectConfig.GitLabCIConfig = spring.CreateGitlabCIInstanceFromCommandFlags(cmd)
 
 	gitRepositoryUrl = util.GetValue(cmd, gitRepoUrl)
 }
