@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/saeedafshari8/flixinit/util"
+	"github.com/rocketlaunchercloud/rlctl/util"
 	"net/http"
 )
 
@@ -69,7 +69,10 @@ func GitCreateProject(gitlabConfig GitlabConfig) (*GitlabProject, error) {
 	channelResponse := <-ch
 	if channelResponse.Success {
 		data := &GitlabProject{}
-		json.Unmarshal(channelResponse.Data, &data)
+		err = json.Unmarshal(channelResponse.Data, &data)
+		if err != nil {
+			return nil, err
+		}
 		return data, nil
 	}
 	return nil, channelResponse.Error
@@ -77,11 +80,12 @@ func GitCreateProject(gitlabConfig GitlabConfig) (*GitlabProject, error) {
 
 func GitGetNamespaces(token string) ([]GitlabNamespace, error) {
 	req, err := http.NewRequest("GET", "https://git.flix.tech/api/v4/namespaces", nil)
-	req.Header.Set("PRIVATE-TOKEN", token)
 
 	if err != nil {
 		return nil, err
 	}
+
+	req.Header.Set("PRIVATE-TOKEN", token)
 
 	ch := make(chan util.ChannelResponse)
 	defer close(ch)
@@ -91,7 +95,10 @@ func GitGetNamespaces(token string) ([]GitlabNamespace, error) {
 	channelResponse := <-ch
 	if channelResponse.Success {
 		data := make([]GitlabNamespace, 0)
-		json.Unmarshal(channelResponse.Data, &data)
+		err = json.Unmarshal(channelResponse.Data, &data)
+		if err != nil {
+			return nil, err
+		}
 		return data, nil
 	}
 	return nil, err

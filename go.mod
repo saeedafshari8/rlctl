@@ -1,4 +1,4 @@
-module github.com/saeedafshari8/flixinit
+module github.com/rocketlaunchercloud/rlctl
 
 go 1.13
 

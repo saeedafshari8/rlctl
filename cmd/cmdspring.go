@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"github.com/saeedafshari8/flixinit/project/spring"
-	"github.com/saeedafshari8/flixinit/util"
+	"github.com/rocketlaunchercloud/rlctl/project/spring"
+	"github.com/rocketlaunchercloud/rlctl/util"
 	"github.com/spf13/cobra"
 	"log"
 	"net/url"

@@ -5,4 +5,4 @@
 // and any other packr generated files.
 package util
 
-import _ "github.com/saeedafshari8/flixinit/packrd"
+import _ "github.com/rocketlaunchercloud/rlctl/packrd"

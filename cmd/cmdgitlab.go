@@ -2,8 +2,8 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/saeedafshari8/flixinit/project/gitlab"
-	"github.com/saeedafshari8/flixinit/util"
+	"github.com/rocketlaunchercloud/rlctl/project/gitlab"
+	"github.com/rocketlaunchercloud/rlctl/util"
 	"github.com/spf13/cobra"
 	"log"
 )
