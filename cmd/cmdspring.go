@@ -29,12 +29,9 @@ const (
 	kafkaEnabled            = "kafka-enabled"
 	azureEnabled            = "azure-enabled"
 	gitlabCIEnabled         = "gitlab-ci-enabled"
-
-	sonarEnabled   = "sonar-enabled"
-	sonarVersion   = "sonar-version"
-	sonarLogin     = "sonar-login"
-	sonarUserToken = "sonar-user-token"
-	sonarHost      = "sonar-host"
+	jacocoEnabled           = "jacoco-enabled"
+	buildPath               = "build-path"
+	sonarEnabled            = "sonar-enabled"
 
 	gitRepoUrl = "git-repo-url"
 )
@@ -79,6 +76,12 @@ var (
 				util.LogMessageAndExit("Unable to copy .gitignore")
 			}
 
+			message, err := spring.ParseAndSaveSonarQubeFile(projectRootPath, &springProjectConfig)
+			if err != nil {
+				util.LogMessageAndExit("Unable to copy .gitignore")
+			}
+			log.Println(message)
+
 			spring.SaveK8sTemplates(&projectRootPath, &springProjectConfig)
 
 			if gitRepositoryUrl != "" {
@@ -116,12 +119,11 @@ func initGradleCmdFlags() {
 	SpringCommand.Flags().StringP(springBootVersion, "", spring.SpringBootLatestVersion, "Spring boot version")
 	SpringCommand.Flags().StringP(buildTool, "", spring.Gradle, "Spring project type [gradle-project | maven-project]")
 	SpringCommand.Flags().BoolP(gitlabCIEnabled, "", true, "Create .gitlab-ci config")
-
+	SpringCommand.Flags().BoolP(jacocoEnabled, "", true, "Enable jacoco integration")
+	SpringCommand.Flags().StringP(buildPath, "", "./build", "Project build path")
 	SpringCommand.Flags().BoolP(sonarEnabled, "", false, "Enable SonarQube integration")
-	SpringCommand.Flags().StringP(sonarHost, "", "", "SonarQuebe host")
-	SpringCommand.Flags().StringP(sonarUserToken, "", "", "SonarQuebe user token")
-	SpringCommand.Flags().StringP(sonarLogin, "", "", "SonarQuebe login")
-	SpringCommand.Flags().StringP(sonarVersion, "", "2.7", "SonarQuebe library version")
+
+	spring.AddSonarFlagsToCommand(SpringCommand)
 
 	spring.AddDockerFlagsToCommand(SpringCommand)
 
@@ -155,12 +157,11 @@ func initSpringCmdConfig(cmd *cobra.Command) {
 	springProjectConfig.EnableAzureActiveDirectory = util.GetValueBool(cmd, azureEnabled)
 	springProjectConfig.EnableKafka = util.GetValueBool(cmd, kafkaEnabled)
 	springProjectConfig.EnableGitLabCI = util.GetValueBool(cmd, gitlabCIEnabled)
-
+	springProjectConfig.EnableJacoco = util.GetValueBool(cmd, jacocoEnabled)
+	springProjectConfig.BuildPath = util.GetValue(cmd, buildPath)
 	springProjectConfig.EnableSonar = util.GetValueBool(cmd, sonarEnabled)
-	springProjectConfig.SonarHost = util.GetValue(cmd, sonarHost)
-	springProjectConfig.SonarLogin = util.GetValue(cmd, sonarLogin)
-	springProjectConfig.SonarUserToken = util.GetValue(cmd, sonarUserToken)
-	springProjectConfig.SonarVersion = util.GetValue(cmd, sonarVersion)
+
+	springProjectConfig.SonarQubeConfig = spring.CreateSonarInstanceFromCommandFlags(cmd)
 
 	springProjectConfig.DockerConfig = spring.CreateDockerInstanceFromCommandFlags(cmd)
 

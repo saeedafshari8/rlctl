@@ -21,6 +21,7 @@ type GitLabCI struct {
 	K8SProdNamespace        string
 	K8SDevCluster           string
 	K8SProdCluster          string
+	SonarQubeScannerImage   string
 }
 
 var (
@@ -37,6 +38,7 @@ var (
 	gitlabCIK8SProdNamespace    = "gitlab-ci-k8s-prod-namespace"
 	gitlabCIK8SStagingCluster   = "gitlab-ci-k8s-staging-cluster"
 	gitlabCIK8SProdCluster      = "gitlab-ci-k8s-prod-cluster"
+	gitlabCISonarScannerImage   = "gitlab-ci-sonar-scanner-image"
 
 	defaultGitlabCIInstance = GitLabCI{
 		Tags:                    []string{},
@@ -48,6 +50,7 @@ var (
 		K8SProdNamespace:        "",
 		K8SDevCluster:           "",
 		K8SProdCluster:          "",
+		SonarQubeScannerImage:   "",
 	}
 )
 
@@ -61,6 +64,8 @@ func AddGitlabCIFlagsToCommand(cmd *cobra.Command) {
 	cmd.Flags().StringP(gitlabCIK8SProdNamespace, "", defaultGitlabCIInstance.K8SProdNamespace, ".gitlab-ci except")
 	cmd.Flags().StringP(gitlabCIK8SStagingCluster, "", defaultGitlabCIInstance.K8SDevCluster, ".gitlab-ci except")
 	cmd.Flags().StringP(gitlabCIK8SProdCluster, "", defaultGitlabCIInstance.K8SProdCluster, ".gitlab-ci except")
+
+	cmd.Flags().StringP(gitlabCISonarScannerImage, "", defaultGitlabCIInstance.SonarQubeScannerImage, "sonar-scanner image")
 }
 
 func CreateGitlabCIInstanceFromCommandFlags(cmd *cobra.Command) GitLabCI {
@@ -74,6 +79,7 @@ func CreateGitlabCIInstanceFromCommandFlags(cmd *cobra.Command) GitLabCI {
 	ci.K8SProdNamespace = util.GetValue(cmd, gitlabCIK8SProdNamespace)
 	ci.K8SDevCluster = util.GetValue(cmd, gitlabCIK8SStagingCluster)
 	ci.K8SProdCluster = util.GetValue(cmd, gitlabCIK8SProdCluster)
+	ci.SonarQubeScannerImage = util.GetValue(cmd, gitlabCISonarScannerImage)
 	return ci
 }
 
