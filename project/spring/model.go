@@ -8,6 +8,7 @@ type SpringProjectConfig struct {
 	Description                string
 	Group                      string
 	Version                    string
+	BuildPath                  string
 	ServerProtocol             string
 	ServerHost                 string
 	ServerPort                 string
@@ -21,10 +22,8 @@ type SpringProjectConfig struct {
 	EnableGitLabCI             bool
 	EnableKafka                bool
 	EnableSonar                bool
-	SonarHost                  string
-	SonarLogin                 string
-	SonarUserToken             string
-	SonarVersion               string
+	EnableJacoco               bool
+	SonarQubeConfig            SonarQube
 	DockerConfig               Docker
 	GitLabCIConfig             GitLabCI
 }
