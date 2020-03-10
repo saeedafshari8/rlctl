@@ -3,7 +3,7 @@ apiVersion: apps/v1beta1
 kind: Deployment
 metadata:
   name: {{.Name}}
-  namespace: charter-cust
+  namespace: {{.GitLabCIConfig.K8SProdNamespace}}
   labels:
     app: {{.Name}}
     branch: master
@@ -25,7 +25,7 @@ spec:
           command: ["java"]
           args: ["-jar", "-javaagent:newrelic.jar", "-Dnewrelic.environment=prod",  "-Dnewrelic.config.file=config/newrelic.yml", "-XX:+UseG1GC", "-Xmx4g", "app.jar"]
           ports:
-            - containerPort: 8080
+            - containerPort: {{.DockerConfig.ExposedPort}}
           resources:
             requests:
               memory: "1.5Gi"
@@ -35,13 +35,13 @@ spec:
           readinessProbe:
             httpGet:
               path: /actuator/health
-              port: 8080
+              port: {{.DockerConfig.ExposedPort}}
             initialDelaySeconds: 100
             periodSeconds: 3
           livenessProbe:
             httpGet:
               path: /actuator/health
-              port: 8080
+              port: {{.DockerConfig.ExposedPort}}
             initialDelaySeconds: 600
             periodSeconds: 3
           env:
@@ -64,7 +64,7 @@ kind: Service
 apiVersion: v1
 metadata:
   name: {{.Name}}
-  namespace: charter-cust
+  namespace: {{.GitLabCIConfig.K8SProdNamespace}}
   labels:
     expose: http
     access: public
@@ -73,7 +73,7 @@ spec:
     - name: http
       protocol: TCP
       port: 80
-      targetPort: 8080
+      targetPort: {{.DockerConfig.ExposedPort}}
   selector:
     app: {{.Name}}
 
