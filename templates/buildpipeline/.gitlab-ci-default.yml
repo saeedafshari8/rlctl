@@ -80,7 +80,7 @@ test:
 {{if eq .EnableSonar true}}
 # Execute Sonar check
 SonarQube Check:
-  image: dcr.flix.tech/charter/cust/sonnar-scanner
+  image: {{.GitLabCIConfig.SonarQubeScannerImage}}
   stage: sonar
   cache:
     policy: pull
